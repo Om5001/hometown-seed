@@ -1,0 +1,2151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hometown Seed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: a civic map-first landing page (dot map of every ZIP as the hero), then a two-column campaign page: fundraising on the left, area profile on the right. */
+:root{
+  --bg:#F2F5F9; --surface:#FFFFFF; --sunk:#E8EDF4; --ink:#0D1A30; --muted:#566379; --line:#D7DEE8;
+  --green:#0E8749; --green-ink:#0A6236; --green-soft:#DCF1E5; --on-green:#FFFFFF;
+  --red:#BF342D; --red-soft:#FAE3E1; --gold:#C98A12; --gold-soft:#FBF0D9;
+  --land:#E1E7F0; --border-state:#C7D0DD; --dot:#A9B4C6; --navy:#13284D;
+  --friend:#2563C9; --friend-soft:#E2EBFB; --friend-ink:#1D4FA3; --on-friend:#FFFFFF;
+  --shadow:0 1px 2px rgba(13,26,48,.05),0 10px 30px -12px rgba(13,26,48,.14);
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --r:16px; --r-sm:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#08111F; --surface:#0F1A2D; --sunk:#16233A; --ink:#E7EDF6; --muted:#94A2B9; --line:#223049;
+  --green:#36C47A; --green-ink:#6BE3A3; --green-soft:#0E3021; --on-green:#04210F;
+  --red:#FF6C5E; --red-soft:#3A1614; --gold:#F0B54A; --gold-soft:#3A2A0C;
+  --land:#142239; --border-state:#24365A; --dot:#34476A; --navy:#C8D6EC;
+  --friend:#6EA2FF; --friend-soft:#122A4F; --friend-ink:#A3C4FF; --on-friend:#061A3A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px -12px rgba(0,0,0,.6); color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#08111F; --surface:#0F1A2D; --sunk:#16233A; --ink:#E7EDF6; --muted:#94A2B9; --line:#223049;
+  --green:#36C47A; --green-ink:#6BE3A3; --green-soft:#0E3021; --on-green:#04210F;
+  --red:#FF6C5E; --red-soft:#3A1614; --gold:#F0B54A; --gold-soft:#3A2A0C;
+  --land:#142239; --border-state:#24365A; --dot:#34476A; --navy:#C8D6EC;
+  --friend:#6EA2FF; --friend-soft:#122A4F; --friend-ink:#A3C4FF; --on-friend:#061A3A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px -12px rgba(0,0,0,.6); color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-stretch:112%;letter-spacing:-.01em;line-height:1.08;text-wrap:balance;margin:0}
+p{margin:0}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--green) 55%,transparent);outline-offset:2px;border-radius:6px}
+
+/* Header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:20px;height:62px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--f-display);font-weight:800;font-stretch:118%;font-size:18px;letter-spacing:-.01em;cursor:pointer;background:none;border:0;padding:0;white-space:nowrap}
+@media (max-width:420px){.brand{font-size:16px}}
+.brand svg{flex:none}
+.nav{display:flex;gap:4px;margin-left:auto;align-items:center}
+.nav a{font-size:14px;font-weight:600;color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:999px}
+.nav a:hover{color:var(--ink);background:var(--sunk)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;font-weight:700;cursor:pointer;padding:12px 20px;font-size:15px;transition:transform .12s,background .15s,box-shadow .15s;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn-green{background:var(--green);color:var(--on-green);box-shadow:0 6px 16px -6px color-mix(in srgb,var(--green) 70%,transparent)}
+.btn-green:hover{background:var(--green-ink)}
+.btn-ghost{background:var(--sunk);color:var(--ink)}
+.btn-ghost:hover{background:var(--line)}
+.btn-sm{padding:8px 14px;font-size:14px}
+@media (max-width:760px){.nav a{display:none}}
+
+/* Home */
+.hero{padding-block:52px 26px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:40px;align-items:end}
+@media (max-width:820px){.hero{padding-block:32px 20px}.hero-grid{grid-template-columns:minmax(0,1fr);gap:4px}}
+.hero h1{font-size:clamp(38px,6vw,68px);font-weight:900;font-stretch:120%;letter-spacing:-.025em}
+.hero h1 em{font-style:normal;color:var(--green)}
+.hero .lede{margin-top:18px;font-size:17px;color:var(--muted);max-width:52ch}
+.search{display:flex;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px;box-shadow:var(--shadow);max-width:460px}
+.search label{display:flex;align-items:center;gap:10px;flex:1;min-width:0;padding-left:14px}
+.search input{border:0;background:transparent;outline:0;font-family:var(--f-mono);font-size:20px;font-weight:600;letter-spacing:.12em;width:100%;min-width:0;padding:8px 0}
+.search input::placeholder{font-family:var(--f-body);letter-spacing:0;font-size:16px;font-weight:500;color:var(--muted)}
+.search .btn{padding:12px 26px;font-size:16px}
+.search-err{color:var(--red);font-size:14px;font-weight:600;margin-top:10px;min-height:1.4em}
+.tries{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px;font-size:13px;color:var(--muted)}
+.chip-btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink)}
+.chip-btn:hover{border-color:var(--green);color:var(--green-ink)}
+.chip-btn .num{color:var(--muted);margin-right:4px}
+
+.mapcard{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:18px;margin-top:26px}
+.mapstage{position:relative;width:100%;aspect-ratio:975/610;max-width:100%}
+.mapstage canvas{position:absolute;inset:0;width:100%;height:100%}
+.mapstage canvas.ov{cursor:crosshair}
+.mapstage canvas.ov.hot{cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:18px;align-items:center;font-size:13px;color:var(--muted);padding:4px 6px 10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.maphint{font-size:13px;color:var(--muted);text-align:right;padding:6px 6px 0}
+.ticker{margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px 6px 10px;font-size:13px;font-weight:600;max-width:100%;min-width:0}
+.ticker span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.live{width:8px;height:8px;border-radius:50%;background:var(--green);flex:none;box-shadow:0 0 0 0 var(--green);animation:live 1.8s infinite}
+@keyframes live{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 60%,transparent)}100%{box-shadow:0 0 0 9px transparent}}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);border-radius:10px;padding:8px 11px;font-size:13px;line-height:1.35;white-space:nowrap;transform:translate(-50%,calc(-100% - 12px));box-shadow:var(--shadow);z-index:3}
+.tip b{font-family:var(--f-mono);font-weight:600}
+.tip .ok{color:var(--green-soft)}
+@media (max-width:640px){.maphint{display:none}.ticker{margin-left:0}}
+
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:18px;border-top:1px solid var(--line)}
+.stat{padding:16px 6px 4px;display:flex;flex-direction:column;gap:2px}
+.stat + .stat{border-left:1px solid var(--line);padding-left:18px}
+.stat .num{font-size:26px;font-weight:600}
+.stat small{font-size:13px;color:var(--muted)}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat:nth-child(3){border-left:0;padding-left:6px}}
+
+.section{padding-block:56px 8px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.section-head h2{font-size:clamp(26px,3.4vw,36px);font-weight:800}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.step .n{font-family:var(--f-mono);font-weight:600;font-size:13px;color:var(--green-ink);background:var(--green-soft);border-radius:999px;padding:3px 10px;display:inline-block}
+.step h3{font-size:20px;margin:14px 0 6px;font-weight:800}
+.step p{color:var(--muted);font-size:15px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.ccard{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;cursor:pointer;display:flex;flex-direction:column;gap:12px;transition:border-color .15s,transform .15s}
+.ccard:hover{border-color:var(--green);transform:translateY(-2px)}
+.ccard .loc{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ccard .loc b{font-family:var(--f-display);font-stretch:112%;font-size:19px;font-weight:800}
+.ccard .loc .num{color:var(--muted);font-size:14px}
+.ccard .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);gap:8px}
+.ccard .meta b{color:var(--ink)}
+@media (max-width:900px){.steps,.cards{grid-template-columns:minmax(0,1fr)}}
+
+.bar{position:relative;height:10px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.bar > span{position:absolute;inset:0 auto 0 0;border-radius:inherit;background:var(--green);width:0;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+
+/* Dashboard */
+.dash-head{padding-block:28px 22px}
+.crumbs{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.back{display:inline-flex;align-items:center;gap:6px;border:0;background:none;cursor:pointer;font-weight:700;color:var(--muted);padding:6px 0;font-size:14px}
+.back:hover{color:var(--ink)}
+.search.mini{max-width:300px;padding:4px;box-shadow:none}
+.search.mini input{font-size:15px;padding:5px 0}
+.search.mini .btn{padding:8px 16px;font-size:14px}
+.title-row{display:flex;gap:18px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.title-row h1{font-size:clamp(32px,5vw,52px);font-weight:900;font-stretch:118%}
+.title-row h1 .num{font-weight:600;color:var(--muted);font-stretch:100%}
+.title-row p{color:var(--muted);margin-top:8px;font-size:16px}
+.pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 14px 7px 10px;font-weight:800;font-size:14px;letter-spacing:.02em;text-transform:uppercase;font-family:var(--f-display);font-stretch:110%}
+.pill.ok{background:var(--green-soft);color:var(--green-ink)}
+.pill.no{background:var(--red-soft);color:var(--red)}
+.pill.gold{background:var(--gold-soft);color:var(--gold)}
+.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:22px;align-items:start;padding-bottom:40px}
+.col{display:flex;flex-direction:column;gap:22px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;min-width:0}
+.panel.hero-panel{box-shadow:var(--shadow);border-radius:22px;padding:28px}
+.panel h2{font-size:22px;font-weight:800}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+@media (max-width:920px){.grid{grid-template-columns:minmax(0,1fr)}}
+
+.raised{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.raised .big{font-family:var(--f-mono);font-weight:600;font-size:clamp(34px,5vw,50px);letter-spacing:-.04em;line-height:1}
+.raised .of{color:var(--muted);font-size:15px;margin-top:8px}
+.raised .of b{color:var(--ink)}
+.pct{font-family:var(--f-display);font-stretch:115%;font-weight:900;font-size:clamp(30px,4vw,42px);color:var(--green);line-height:1}
+.pbar{position:relative;margin-top:20px;height:22px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.pbar > span{position:absolute;inset:0 auto 0 0;border-radius:inherit;width:0;transition:width 1.4s cubic-bezier(.2,.8,.2,1);
+  background:linear-gradient(90deg,var(--green-ink),var(--green));}
+.pbar > span::after{content:"";position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(-45deg,transparent 0 10px,rgba(255,255,255,.12) 10px 20px)}
+.pbar i{position:absolute;top:0;bottom:0;width:2px;background:var(--surface);opacity:.75;z-index:1}
+.ticks{position:relative;height:20px;margin-top:6px;font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+.ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.ticks span:first-child{transform:none}
+.ticks span:last-child{transform:translateX(-100%)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:22px;border-top:1px solid var(--line)}
+.kpi{padding:16px 4px 0;display:flex;flex-direction:column;gap:3px;min-width:0}
+.kpi + .kpi{border-left:1px solid var(--line);padding-left:16px}
+.kpi .num{font-size:22px;font-weight:600}
+.kpi small{font-size:13px;color:var(--muted)}
+@media (max-width:600px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi:nth-child(3){border-left:0;padding-left:4px}.kpi:nth-child(n+3){border-top:1px solid var(--line);margin-top:14px}}
+.org{display:flex;align-items:center;gap:12px;margin-top:22px;padding-top:18px;border-top:1px solid var(--line);font-size:14px;color:var(--muted);flex-wrap:wrap}
+.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-family:var(--f-display);background:var(--navy);color:var(--surface);flex:none;font-size:14px}
+.org b{color:var(--ink)}
+.org .sp{margin-left:auto;display:flex;gap:8px}
+
+/* Donate */
+.amts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.amt{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 8px;cursor:pointer;font-family:var(--f-mono);font-weight:600;font-size:19px;display:flex;flex-direction:column;align-items:center;gap:2px;transition:border-color .12s,background .12s}
+.amt small{font-family:var(--f-body);font-size:12px;font-weight:600;color:var(--muted)}
+.amt:hover{border-color:var(--green)}
+.amt[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft);color:var(--green-ink)}
+.amt[aria-pressed="true"] small{color:var(--green-ink)}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field > span{font-size:13px;font-weight:700}
+.field > span em{font-style:normal;color:var(--muted);font-weight:500}
+.input{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;outline:0;width:100%;min-width:0;transition:border-color .12s,box-shadow .12s}
+.input:focus{border-color:var(--green);box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 18%,transparent)}
+.input.bad{border-color:var(--red)}
+.input.mono{font-family:var(--f-mono);letter-spacing:.04em}
+textarea.input{resize:vertical;min-height:76px}
+.money{position:relative}
+.money::before{content:"$";position:absolute;left:14px;top:50%;transform:translateY(-50%);font-family:var(--f-mono);font-weight:600;color:var(--muted)}
+.money .input{padding-left:28px;font-family:var(--f-mono);font-weight:600}
+.row{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.row.r3{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr)}
+@media (max-width:520px){.row,.row.r3{grid-template-columns:minmax(0,1fr)}.amts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stack{display:flex;flex-direction:column;gap:16px}
+.seg{display:inline-grid;grid-auto-flow:column;background:var(--sunk);border-radius:999px;padding:4px;gap:4px}
+.seg button{border:0;background:transparent;border-radius:999px;padding:7px 16px;font-weight:700;font-size:14px;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--green);margin:2px 0 0;flex:none}
+.impact{display:flex;align-items:center;gap:12px;background:var(--green-soft);color:var(--green-ink);border-radius:12px;padding:12px 14px;font-size:14px;font-weight:600}
+.impact svg{flex:none}
+.divider{height:1px;background:var(--line);margin:6px 0}
+.subhead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.subhead h3{font-size:17px;font-weight:800;display:flex;align-items:center;gap:10px}
+.subhead h3 .n{font-family:var(--f-mono);font-size:12px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--surface);font-stretch:100%}
+.cardnum{position:relative}
+.cardnum .brandtag{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--muted);background:var(--sunk);padding:3px 7px;border-radius:5px}
+.demo{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);background:var(--sunk);border-radius:12px;padding:11px 13px}
+.demo svg{flex:none;margin-top:1px}
+.summary{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.summary div{display:flex;justify-content:space-between;gap:10px}
+.summary .num{font-size:14px}
+.summary .tot{font-weight:800;font-size:16px;padding-top:8px;border-top:1px dashed var(--line)}
+.summary .tot .num{font-size:17px}
+.err{color:var(--red);font-size:13px;font-weight:600}
+.submit{width:100%;padding:16px;font-size:17px}
+.thanks{text-align:center;padding:18px 6px 6px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.thanks .ring{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--green-soft);color:var(--green)}
+.thanks h3{font-size:26px;font-weight:900}
+.thanks p{color:var(--muted);max-width:44ch}
+.spin{width:18px;height:18px;border-radius:50%;border:2.5px solid color-mix(in srgb,var(--on-green) 35%,transparent);border-top-color:var(--on-green);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Aside */
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 18px}
+.fact small{display:block;font-size:13px;color:var(--muted)}
+.fact .num{font-size:22px;font-weight:600}
+.fact.wide{grid-column:1/-1}
+.kidsbig{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.kidsbig .num{font-size:38px;font-weight:600;letter-spacing:-.04em;color:var(--green)}
+.kidsbig.no .num{color:var(--red)}
+.ages{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.age{display:grid;grid-template-columns:52px minmax(0,1fr) 62px;gap:10px;align-items:center;font-size:13px}
+.age > span:first-child{color:var(--muted);font-weight:600}
+.age .num{text-align:right;font-size:13px}
+.age .bar{height:12px;border-radius:4px}
+.age .bar > span{background:var(--navy);border-radius:4px;opacity:.85}
+.locmap{position:relative;width:100%;aspect-ratio:975/610;max-width:100%;margin-top:4px}
+.locmap canvas{position:absolute;inset:0;width:100%;height:100%}
+.feed{display:flex;flex-direction:column}
+.don{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:start;padding:13px 0;border-top:1px solid var(--line)}
+.don:first-child{border-top:0;padding-top:0}
+.avatar.av-none{background:var(--sunk);color:var(--muted);font-size:13px}
+.avatar.av-org{background:var(--sunk);color:var(--ink);font-size:13px}
+.avatar.av-friend{background:var(--friend-soft);color:var(--friend-ink);box-shadow:inset 0 0 0 2px var(--friend);font-size:13px}
+.avatar.av-major{background:var(--gold-soft);color:var(--gold);box-shadow:inset 0 0 0 2px var(--gold);font-size:13px}
+.avatar.av-you{background:var(--green);color:var(--on-green);font-size:13px}
+.don.k-friend .amt-tag{color:var(--friend-ink)}
+.don.k-major .amt-tag{color:var(--gold)}
+.don.k-you .amt-tag{color:var(--green-ink)}
+.don b{font-size:14px}
+.don p{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.don .amt-tag{font-family:var(--f-mono);font-weight:600;font-size:15px;text-align:right}
+.don .amt-tag small{display:block;font-family:var(--f-body);font-size:12px;color:var(--muted);font-weight:500}
+.about p{color:var(--muted);font-size:14px}
+.about ul{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px}
+.about li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px}
+.about li svg{margin-top:3px;color:var(--green)}
+.meter-note{font-size:15px;color:var(--muted);margin-top:14px}
+.meter-note b{color:var(--ink)}
+.nearby{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+@media (max-width:520px){.nearby{grid-template-columns:minmax(0,1fr)}}
+.nb{text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.nb:hover{border-color:var(--green)}
+.nb b{font-family:var(--f-display);font-stretch:110%;font-size:16px}
+.nb small{color:var(--muted);font-size:13px}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:999px;font-weight:600;font-size:14px;transition:.25s;z-index:50;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* Donor network */
+.netbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 14px 4px 12px;cursor:pointer;font-weight:700;font-size:14px;position:relative;margin:0 4px 0 6px;height:38px}
+.netbtn:hover{border-color:var(--friend)}
+.netbtn .count{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;border-radius:999px;background:var(--friend);color:var(--on-friend);font-size:11px;font-weight:600;display:grid;place-items:center;padding:0 5px;font-family:var(--f-mono);border:2px solid var(--surface)}
+.avstack{display:inline-flex;align-items:center}
+.avstack .avatar{width:26px;height:26px;font-size:10px;border:2px solid var(--surface)}
+.avstack .avatar + .avatar{margin-left:-8px}
+.netsum .avstack .avatar,.netstrip .avstack .avatar{width:30px;height:30px;font-size:11px}
+@media (max-width:520px){.nb-label{display:none}}
+@media (max-width:420px){#startBtn{display:none}}
+.badge{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 7px;margin-left:7px;vertical-align:1px;font-family:var(--f-body)}
+.badge.friend{background:var(--friend-soft);color:var(--friend-ink)}
+.badge.major{background:var(--gold-soft);color:var(--gold)}
+.badge.you{background:var(--green-soft);color:var(--green-ink)}
+.keyrow{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--muted);margin:-4px 0 14px}
+.keyrow i,.barkey i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+i.kf{background:var(--friend)} i.km{background:var(--gold)} i.ky{background:var(--green)} i.kt{background:var(--green-ink)}
+.seg.sm button{padding:5px 12px;font-size:13px}
+.empty{color:var(--muted);font-size:14px;padding:4px 0}
+.zlink{border:0;background:none;padding:0;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-decoration-thickness:2px;text-underline-offset:3px;cursor:pointer;font-size:inherit;text-align:left}
+.zlink:hover{text-decoration-color:var(--green);color:var(--green-ink)}
+.zlink .num{font-weight:600}
+.scrim{position:fixed;inset:0;background:rgba(5,12,24,.45);z-index:40;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:41;display:flex;flex-direction:column;transform:translateX(100%);visibility:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility 0s .3s;box-shadow:-24px 0 60px -24px rgba(0,0,0,.4);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer.open{transform:none;visibility:visible;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.drawer-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:20px 22px 16px;border-bottom:1px solid var(--line)}
+.drawer-head h2{font-size:26px;font-weight:900;margin-top:4px}
+.iconbtn{width:38px;height:38px;border-radius:50%;border:0;background:var(--sunk);cursor:pointer;display:grid;place-items:center;flex:none;color:var(--ink)}
+.iconbtn:hover{background:var(--line)}
+.drawer-body{overflow-y:auto;padding:18px 22px 28px;display:flex;flex-direction:column;gap:20px;overscroll-behavior:contain;flex:1}
+.netsum{background:var(--friend-soft);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:2px}
+.netsum .eyebrow{color:var(--friend-ink)}
+.netsum .big{font-size:34px;font-weight:600;letter-spacing:-.04em}
+.netsum p{font-size:14px}
+.netsum .avstack{margin-top:10px}
+.nfeed{display:flex;flex-direction:column}
+.nitem{display:grid;grid-template-columns:38px minmax(0,1fr);gap:12px;padding:14px 0;border-top:1px solid var(--line)}
+.nitem:first-child{border-top:0;padding-top:0}
+.nitem p{font-size:14px;line-height:1.5}
+.nitem .num{font-size:14px}
+.nitem.k-friend p > .num{color:var(--friend-ink)}
+.nitem.k-major p > .num{color:var(--gold)}
+.nitem.k-you p > .num{color:var(--green-ink)}
+.nitem blockquote{margin:7px 0 0;padding:8px 12px;background:var(--sunk);border-radius:4px 12px 12px 12px;font-size:13.5px;line-height:1.45}
+.nitem small{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-top:7px}
+.nitem small .badge{margin-left:0}
+.dh{font-size:17px;font-weight:800;margin-bottom:6px}
+.follows{display:flex;flex-direction:column}
+.frow{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.frow:first-child{border-top:0}
+.frow b{font-size:14px;display:block;line-height:1.3}
+.frow small{font-size:12.5px;color:var(--muted)}
+.fbtn{border:1.5px solid var(--gold);background:transparent;color:var(--gold);border-radius:999px;padding:6px 14px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+.fbtn:hover{background:var(--gold-soft)}
+.fbtn[aria-pressed="true"]{background:var(--gold-soft);border-color:transparent}
+.fbtn.sm{padding:1px 9px;font-size:11.5px;margin-left:8px;vertical-align:1px}
+.lrow{display:grid;grid-template-columns:22px 40px minmax(0,1fr) auto;gap:12px;align-items:start;padding:15px 0;border-top:1px solid var(--line)}
+.lrow:first-child{border-top:0;padding-top:2px}
+.rank{font-size:14px;color:var(--muted);padding-top:9px;text-align:right}
+.lname{font-size:15px;line-height:1.35}
+.lto{font-size:13px;color:var(--muted);margin-top:2px}
+.lmsg{font-size:13.5px;margin-top:6px;color:var(--muted)}
+.lamt{font-size:21px;font-weight:600;padding-top:6px;text-align:right}
+.lrow.k-friend .lamt{color:var(--friend-ink)} .lrow.k-major .lamt{color:var(--gold)} .lrow.k-you .lamt{color:var(--green-ink)}
+.home-grid{padding-bottom:0}
+/* Account + sign-in */
+.top .wrap{position:relative}
+.acct{border:0;background:none;padding:0;cursor:pointer;border-radius:50%;margin-left:6px;flex:none}
+.acct .avatar{width:36px;height:36px;font-size:13px}
+.acctmenu{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:58px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:8px;min-width:230px;z-index:30;display:flex;flex-direction:column}
+.acctmenu p{padding:8px 10px 12px;border-bottom:1px solid var(--line);margin-bottom:6px;display:flex;flex-direction:column;font-size:14px}
+.acctmenu small{color:var(--muted);font-size:12.5px;overflow-wrap:anywhere}
+.acctmenu button{border:0;background:none;text-align:left;padding:10px;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px}
+.acctmenu button:hover{background:var(--sunk)}
+.login{position:fixed;inset:0;z-index:60;display:grid;place-items:center;overflow-y:auto;background:color-mix(in srgb,var(--bg) 74%,transparent);backdrop-filter:blur(10px);padding-block:max(24px,env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.login-card{width:min(420px,100%);background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:28px;display:flex;flex-direction:column;gap:20px}
+.login-card h2{font-size:28px;font-weight:900}
+.lede2{color:var(--muted);font-size:15px;margin-top:8px}
+.seg.wide{display:grid;grid-template-columns:1fr 1fr}
+.seg.wide .num{font-size:12px;color:var(--muted);margin-left:2px}
+.acts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.fbtn.friend{border-color:var(--friend);color:var(--friend-ink)}
+.fbtn.friend:hover{background:var(--friend-soft)}
+.fbtn.plain{border-color:var(--line);color:var(--muted)}
+.fbtn.plain:hover{background:var(--sunk);color:var(--ink)}
+.fbtn.danger{border-color:var(--red);color:var(--red)}
+.fbtn.danger:hover{background:var(--red-soft)}
+.fbtn.static{border-color:transparent;background:var(--friend-soft);color:var(--friend-ink);cursor:default}
+.addrow{display:flex;gap:8px}
+.addrow .input{flex:1}
+.psec .dh .num{color:var(--muted);font-weight:600;font-size:14px;margin-left:4px}
+.toast{z-index:70}
+
+/* Outside-the-cap notice */
+.capnote{display:flex;gap:14px;align-items:flex-start;background:var(--friend-soft);color:var(--ink);border-radius:16px;padding:16px 18px;margin-top:22px}
+.capnote b{display:block;font-size:16px;color:var(--friend-ink);font-family:var(--f-display);font-stretch:108%;font-weight:800}
+.capnote p{font-size:14px;color:var(--ink);margin-top:4px;max-width:90ch}
+.cap-ico{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface);color:var(--friend-ink)}
+.capnote.sm{margin-top:0;padding:12px 14px;gap:12px}
+.capnote.sm b{font-size:14px}
+.capnote.sm p{font-size:13px}
+.capnote.sm .cap-ico{width:32px;height:32px;border-radius:10px}
+
+/* Impact slider */
+.impactcard{border:1.5px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.ic-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.slider{width:100%;accent-color:var(--green);height:28px;cursor:pointer;margin:2px 0 0}
+.slider-ends{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin-top:-6px}
+.slider-ends span:first-child,.slider-ends span:last-child{font-family:var(--f-mono)}
+.ic-lead{font-size:14px}
+.ic-rows{display:flex;flex-direction:column;gap:9px}
+.icrow{display:grid;grid-template-columns:minmax(84px,auto) minmax(0,1fr) 84px;gap:10px;align-items:center;font-size:13.5px}
+.icrow > span:first-child{color:var(--muted);font-weight:600}
+.icbar{height:14px;border-radius:5px;background:var(--sunk);overflow:hidden}
+.icbar span{display:block;height:100%;background:var(--green);opacity:.55;border-radius:inherit;transition:width .25s}
+.icrow.hi .icbar span{opacity:1}
+.icrow b{text-align:right;font-size:15px}
+.icrow.hi b{color:var(--green-ink);font-size:17px}
+.ic-total{font-size:13.5px;background:var(--green-soft);color:var(--green-ink);border-radius:10px;padding:10px 12px}
+.ic-total b{color:var(--ink)}
+.ic-note{font-size:12px;color:var(--muted)}
+
+/* Running tally */
+.tally{position:relative;margin-top:22px;padding-top:36px}
+.tally .pbar{margin-top:0}
+.tally-tag{position:absolute;top:0;left:0;white-space:nowrap;background:var(--ink);color:var(--bg);font-size:12.5px;padding:5px 10px;border-radius:8px;transition:left 1.4s cubic-bezier(.2,.8,.2,1),transform 1.4s cubic-bezier(.2,.8,.2,1)}
+.tally-tag b{font-family:var(--f-mono);font-weight:600}
+
+/* Community campaigns */
+.camp-tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.camp-tools .search{flex:1 1 320px;max-width:520px;box-shadow:none}
+.camp-tools .search input{font-family:var(--f-body);letter-spacing:0;font-size:15px;font-weight:500;padding:9px 0}
+.camp-tools .search input::-webkit-search-cancel-button{cursor:pointer}
+.ccard.camp{position:relative;padding:0;cursor:default}
+.cc-main{border:0;background:none;color:inherit;font:inherit;text-align:left;padding:20px;display:flex;flex-direction:column;gap:12px;cursor:pointer;width:100%;border-radius:inherit}
+.cc-top{display:flex;gap:12px;align-items:center;padding-right:40px}
+.mono-tile{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-family:var(--f-display);font-weight:900;font-stretch:115%;font-size:15px;flex:none}
+.t0{background:var(--green-soft);color:var(--green-ink)} .t1{background:var(--friend-soft);color:var(--friend-ink)} .t2{background:var(--gold-soft);color:var(--gold)} .t3{background:var(--sunk);color:var(--ink)}
+.cc-name{font-family:var(--f-display);font-stretch:110%;font-size:18px;font-weight:800;display:block;line-height:1.2}
+.cc-top small{color:var(--muted);font-size:13px}
+.cc-places{font-size:13.5px;color:var(--muted)}
+.cc-share{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center;color:var(--ink)}
+.cc-share:hover{border-color:var(--green);color:var(--green-ink)}
+.empty-state{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.btn.danger{background:var(--red-soft);color:var(--red)}
+
+/* Campaign builder */
+.modal{position:fixed;inset:0;z-index:45;display:grid;place-items:center;background:rgba(5,12,24,.45);overflow-y:auto;padding-block:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));animation:fade .2s}
+.modal-card{width:min(680px,100%);max-height:calc(100dvh - 32px);background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+.modal-body{overflow-y:auto;padding:20px 24px 26px;gap:24px;overscroll-behavior:contain}
+.bstep{display:flex;flex-direction:column;gap:10px}
+.hint{color:var(--muted);font-size:14px}
+.combo{position:relative}
+.sugg{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);z-index:5;overflow:hidden}
+.sugg button{display:flex;justify-content:space-between;gap:12px;width:100%;border:0;border-top:1px solid var(--line);background:none;padding:11px 14px;text-align:left;cursor:pointer;font-size:14px;font-weight:600}
+.sugg button:first-child{border-top:0}
+.sugg button small{color:var(--muted);font-weight:500;white-space:nowrap}
+.sugg button:hover,.sugg button:focus-visible{background:var(--sunk)}
+.plist{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) auto 30px;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.prow b{display:block}
+.prow small{color:var(--muted);font-size:12.5px}
+.ptag{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:1px 7px}
+.ptag.pick{background:var(--green-soft);color:var(--green-ink)} .ptag.sugg{background:var(--sunk);color:var(--muted)}
+.xbtn{width:30px;height:30px;border-radius:50%;border:0;background:var(--sunk);cursor:pointer;display:grid;place-items:center;color:var(--muted)}
+.xbtn:hover{background:var(--red-soft);color:var(--red)}
+.xbtn svg{width:14px;height:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px 6px 10px;font-size:13.5px;font-weight:700;cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+.chip small{color:var(--muted);font-weight:500}
+.chip .avatar{width:22px;height:22px;font-size:9px}
+.chip[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft);color:var(--green-ink)}
+@media (max-width:520px){.modal{padding:0}.modal-card{max-height:100dvh;height:100%;border-radius:0}.modal-body{padding:18px max(16px,env(safe-area-inset-left,0px)) 24px}}
+
+/* Area Funds */
+.fundmap{position:relative;width:100%;aspect-ratio:16/10;max-width:100%;border-radius:12px;overflow:hidden;background:var(--sunk)}
+.fundmap canvas{position:absolute;inset:0;width:100%;height:100%}
+.fundbar-wrap{position:relative;margin-top:16px;padding-top:24px}
+.fundbar{display:flex;gap:2px;height:16px;border-radius:6px;overflow:hidden;background:var(--sunk)}
+.fundbar span{background:var(--navy);opacity:.4;min-width:2px}
+.fundbar span.me{background:var(--green);opacity:1}
+.fundbar span.gap{background:transparent;opacity:1}
+.thr{position:absolute;top:0;bottom:-4px;width:0;border-left:2px dashed var(--ink)}
+.thr b{position:absolute;top:0;left:6px;font-family:var(--f-mono);font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+.thr.flip b{left:auto;right:6px}
+.mlist{display:flex;flex-direction:column;margin-top:14px}
+.mhead,.mrow{display:grid;grid-template-columns:52px minmax(0,1fr) 56px 64px;gap:10px;align-items:center;padding:9px 6px}
+.mhead{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:0}
+.mhead span:nth-child(n+3),.mrow > :nth-child(n+3){text-align:right}
+.mrow{border:0;border-top:1px solid var(--line);background:none;text-align:left;cursor:pointer;font-size:14px;width:100%;border-radius:0}
+.mrow:hover{background:var(--sunk)}
+.mrow.me{background:var(--green-soft);color:var(--green-ink);font-weight:700}
+.mrow small{color:var(--muted);font-size:12px}
+.mrow .num{font-size:13px}
+details.more summary{cursor:pointer;font-weight:700;font-size:14px;padding:11px 6px;border-top:1px solid var(--line);color:var(--green-ink);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more[open] summary{display:none}
+@media (max-width:520px){.panel{padding:18px}.lrow{grid-template-columns:38px minmax(0,1fr) auto;gap:10px}.lrow .rank{display:none}.lamt{font-size:18px}}
+.netstrip{display:flex;align-items:center;gap:12px;margin-top:20px;background:var(--friend-soft);color:var(--friend-ink);border-radius:14px;padding:12px 14px;font-size:14px;flex-wrap:wrap}
+.netstrip > span:nth-child(2){flex:1;min-width:180px}
+.netstrip b{color:var(--ink)}
+.netstrip.none{background:var(--sunk);color:var(--muted)}
+.netstrip .btn-ghost{background:var(--surface)}
+.pbar > span.netfill{background:var(--friend);z-index:2;transition-delay:.3s}
+.pbar i{z-index:3}
+.barkey{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.barkey b{color:var(--ink);font-family:var(--f-mono);font-weight:600}
+
+footer{border-top:1px solid var(--line);margin-top:48px}
+footer .wrap{padding-block:28px 40px;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--muted)}
+footer p{max-width:90ch}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <button class="brand" id="brand" type="button" aria-label="Hometown Seed home">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="var(--green)"/><path d="M15 23v-8.5" stroke="var(--on-green)" stroke-width="2.4" stroke-linecap="round"/><path d="M15 15c0-4 2.6-6.6 7-6.6 0 4.2-2.7 6.6-7 6.6Z" fill="var(--on-green)"/><path d="M15 17.2c0-3.2-2.1-5.3-5.6-5.3 0 3.4 2.2 5.3 5.6 5.3Z" fill="var(--on-green)" opacity=".75"/></svg>
+      Hometown Seed
+    </button>
+    <nav class="nav" aria-label="Main">
+      <a href="#how" data-scroll="how">How it works</a>
+      <a href="#campaigns" data-scroll="campaigns">Campaigns</a>
+      <button class="netbtn" id="netBtn" type="button" data-open-network aria-expanded="false" aria-controls="drawer"><span class="avstack" id="netStack"></span><span class="nb-label">Network</span><span class="count" id="netCount" hidden>0</span></button>
+      <button class="btn btn-green btn-sm" id="startBtn" type="button">Find your ZIP</button>
+      <button class="acct" id="acctBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Account" hidden><span class="avatar av-you" id="acctAv"></span></button>
+      <div class="acctmenu" id="acctMenu" role="menu" hidden>
+        <p><b id="acctName"></b><small id="acctEmail"></small></p>
+        <button type="button" role="menuitem" data-open-network>Your network</button>
+        <button type="button" role="menuitem" id="logoutBtn">Sign out</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="home">
+  <section class="wrap hero">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Community funding for Trump Accounts</p>
+        <h1 style="margin-top:12px">Seed every kid in <em>your ZIP code.</em></h1>
+      </div>
+      <div>
+        <p class="lede">Look up any U.S. ZIP to see how many children live there. Areas with 5,000 or more kids have a neighborhood campaign, and every gift is split evenly into those kids' accounts. Smaller towns pool together in Area Funds, or you can build your own campaign.</p>
+        <form class="search" id="homeSearch" style="margin-top:18px" novalidate>
+          <label for="zipInput">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="color:var(--muted);flex:none"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+            <input id="zipInput" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="Enter a ZIP code" aria-label="ZIP code">
+          </label>
+          <button class="btn btn-green" type="submit">Go</button>
+        </form>
+        <p class="search-err" id="homeErr" role="alert"></p>
+        <div class="tries" id="tries"><span>Try</span></div>
+      </div>
+    </div>
+
+    <div class="capnote" role="note">
+      <span class="cap-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.5 3 8.3 7 10 4-1.7 7-5.5 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+      <div><b>Your gift is extra. It never uses up a child's $5,000 limit.</b>
+        <p>Families, friends and employers can put up to $5,000 a year into each child's Trump Account. Gifts made here go in through a charity as a general funding contribution to every child in the area. Under the 2025 law that kind of gift sits outside the $5,000 yearly cap, so it adds to what families can save, never instead of it.</p></div>
+    </div>
+
+    <div class="mapcard">
+      <div class="legend">
+        <span><i style="background:var(--green)"></i>Eligible ZIP (5,000+ kids)</span>
+        <span><i style="background:var(--dot)"></i>Under 5,000 kids</span>
+        <span><i style="background:var(--friend);box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--friend)"></i>Your network gave here</span>
+        <div class="ticker" id="ticker"><span class="live"></span><span id="tickerText">Live gifts across the country</span></div>
+      </div>
+      <div class="mapstage" id="mapStage">
+        <canvas id="mapBase" aria-hidden="true"></canvas>
+        <canvas id="mapOv" class="ov" role="img" aria-label="Map of the United States with a dot for each ZIP code area. Green dots mark ZIP codes with at least 5,000 children."></canvas>
+        <div class="tip" id="tip" hidden></div>
+      </div>
+      <p class="maphint">Hover a dot for details. Click to open its campaign.</p>
+      <div class="stats" id="homeStats"></div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="campaigns">
+    <div class="section-head">
+      <div><h2>Community campaigns</h2><p style="color:var(--muted);margin-top:6px">Campaigns people started for the places they care about, each with its own goal.</p></div>
+      <button class="btn btn-green" type="button" data-start>Start a campaign</button>
+    </div>
+    <div class="camp-tools">
+      <form class="search" role="search" onsubmit="return false"><label for="campSearch"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" style="color:var(--muted);flex:none"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><input id="campSearch" type="search" placeholder="Search by name, place, ZIP or person" autocomplete="off" aria-label="Search community campaigns"></label></form>
+      <div class="seg" role="group" aria-label="Show campaigns"><button type="button" data-campfilter="all" aria-pressed="true">All</button><button type="button" data-campfilter="network" aria-pressed="false">Your network</button><button type="button" data-campfilter="yours" aria-pressed="false">Yours</button></div>
+      <span class="eyebrow" id="campCount" style="margin-left:auto"></span>
+    </div>
+    <div class="cards" id="campCards"></div>
+  </section>
+
+  <section class="wrap section" id="leaders">
+    <div class="section-head"><h2>Biggest donations this week</h2><p style="color:var(--muted)" id="weekRange"></p></div>
+    <div class="grid home-grid">
+      <section class="panel">
+        <div class="panel-head"><span class="eyebrow">Top gifts from all donors</span><div class="keyrow" style="margin:0"><span><i class="kf"></i>Friends</span><span><i class="km"></i>Donors you follow</span></div></div>
+        <div id="leaderList"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Your network</h2><button class="btn btn-ghost btn-sm" type="button" data-open-network>See all</button></div>
+        <div id="netPreviewSum"></div>
+        <div class="nfeed" id="netPreviewList"></div>
+      </section>
+    </div>
+  </section>
+
+  <section class="wrap section" id="how">
+    <div class="section-head"><h2>How a ZIP campaign works</h2></div>
+    <div class="steps">
+      <div class="step"><span class="n">Step 1</span><h3>Find your ZIP</h3><p>We count every kid 18 and under in each ZIP code area using the Census Bureau's American Community Survey, not just babies born 2025–2028.</p></div>
+      <div class="step"><span class="n">Step 2</span><h3>Check eligibility</h3><p>ZIPs with at least 5,000 kids have their own campaign. Smaller ZIPs team up in an Area Fund with neighbors that are all within 25 miles of each other, until they pass 5,000 kids together.</p></div>
+      <div class="step"><span class="n">Step 3</span><h3>Give and watch it grow</h3><p>Every gift is added to a running total and split evenly into each child's Trump Account. Want to pick the places yourself? Start a community campaign with its own goal.</p></div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="zips">
+    <div class="section-head"><h2>Biggest ZIP campaigns</h2><p style="color:var(--muted)">Eligible ZIPs with the largest running totals</p></div>
+    <div class="cards" id="topCards"></div>
+  </section>
+</main>
+
+<main id="dash" hidden></main>
+
+<footer>
+  <div class="wrap">
+    <p><b style="color:var(--ink)">Hometown Seed is a concept mock-up.</b> It is not affiliated with the U.S. Treasury, the IRS, or any account provider. No payments are processed.</p>
+    <p>Population and kids 18 and under: U.S. Census Bureau, American Community Survey 2020–2024 5-year estimates, table B01001, by ZIP Code Tabulation Area. Kids 18 and under = ages under 5, 5–9, 10–14 and 15–17, plus half of the 18–19 group as an estimate of 18-year-olds. Growth projections assume a steady yearly return and are illustrations, not guarantees. Median household income: table B19013. Place names: Census Gazetteer 2024, nearest place to each ZIP's center. Amounts raised, donors, friends and followed major donors are fictional and simulated for this demo.</p>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<div class="scrim" id="scrim" hidden></div>
+<div class="modal" id="builder" role="dialog" aria-modal="true" aria-labelledby="bTitle" hidden>
+  <div class="modal-card">
+    <div class="drawer-head">
+      <div><p class="eyebrow">Start a community campaign</p><h2 id="bTitle">Pick the places you care about</h2></div>
+      <button class="iconbtn" id="bClose" type="button" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <form class="modal-body stack" id="bForm" novalidate>
+      <section class="bstep">
+        <div class="subhead"><h3><span class="n">1</span>Places</h3></div>
+        <p class="hint">Add ZIP codes or cities from anywhere. If they add up to fewer than 5,000 kids, we suggest nearby communities that have received the least so far.</p>
+        <div class="combo">
+          <input class="input" id="bSearch" placeholder="ZIP code or city, like Cypress, CA" autocomplete="off" aria-label="Add a ZIP code or city" aria-controls="bSugg">
+          <div class="sugg" id="bSugg" role="listbox" hidden></div>
+        </div>
+        <div id="bPlaces"></div>
+      </section>
+      <section class="bstep">
+        <div class="subhead"><h3><span class="n">2</span>Name</h3></div>
+        <div class="addrow"><input class="input" id="bName" maxlength="60" placeholder="Give it a fun name" aria-label="Campaign name"><button type="button" class="btn btn-ghost btn-sm" id="bNameGen">Suggest a name</button></div>
+      </section>
+      <section class="bstep">
+        <div class="subhead"><h3><span class="n">3</span>Goal</h3></div>
+        <div class="money"><input class="input" id="bGoal" inputmode="numeric" placeholder="25,000" aria-label="Goal amount in dollars"></div>
+        <div class="chips" id="bGoalChips"></div>
+      </section>
+      <section class="bstep">
+        <div class="subhead"><h3><span class="n">4</span>Organize with friends <em class="hint" style="font-weight:500">optional</em></h3></div>
+        <div class="chips" id="bCo"></div>
+      </section>
+      <label class="field"><span>Description <em>optional, shown on the campaign page</em></span><textarea class="input" id="bDesc" maxlength="200" placeholder="Why these places matter to you"></textarea></label>
+      <p class="err" id="bErr" role="alert"></p>
+      <button class="btn btn-green submit" type="submit">Publish campaign</button>
+    </form>
+  </div>
+</div>
+<div class="login" id="login" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+  <div class="login-card">
+    <div class="brand" style="cursor:default"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="var(--green)"/><path d="M15 23v-8.5" stroke="var(--on-green)" stroke-width="2.4" stroke-linecap="round"/><path d="M15 15c0-4 2.6-6.6 7-6.6 0 4.2-2.7 6.6-7 6.6Z" fill="var(--on-green)"/><path d="M15 17.2c0-3.2-2.1-5.3-5.6-5.3 0 3.4 2.2 5.3 5.6 5.3Z" fill="var(--on-green)" opacity=".75"/></svg>Hometown Seed</div>
+    <div><h2 id="loginTitle">Sign in to your network</h2><p class="lede2">See where your friends and the donors you follow are giving, and keep your own gifts in one place.</p></div>
+    <form class="stack" id="loginForm" novalidate>
+      <label class="field"><span>Email</span><input class="input" id="loginEmail" type="email" autocomplete="username" placeholder="you@example.com"></label>
+      <label class="field"><span>Password</span><input class="input" id="loginPass" type="password" autocomplete="current-password" placeholder="At least 4 characters"></label>
+      <p class="err" id="loginErr" role="alert"></p>
+      <button class="btn btn-green submit" type="submit" id="loginBtn">Sign in</button>
+      <button class="btn btn-ghost" type="button" id="demoBtn">Use the demo account</button>
+    </form>
+    <div class="capnote sm" role="note">
+      <span class="cap-ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.5 3 8.3 7 10 4-1.7 7-5.5 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+      <div><b>Gifts here sit outside the $5,000 yearly limit.</b><p>They go to every kid 18 and under in an area as a charity's general funding contribution, on top of what families save.</p></div>
+    </div>
+    <div class="demo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg><span>Mock sign-in for this demo. Any email and a password of 4 or more characters works. Passwords are never stored or sent anywhere.</span></div>
+  </div>
+</div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true" inert>
+  <div class="drawer-head">
+    <div><p class="eyebrow">Donor network</p><h2 id="drawerTitle">Your network</h2></div>
+    <button class="iconbtn" id="drawerClose" type="button" aria-label="Close network panel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="data.js"></script>
+<script>
+(() => {
+const THRESHOLD = 5000, W = 975, H = 610;
+const $ = (s, el = document) => el.querySelector(s);
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const usd = (n, d = 0) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const usdC = n => n >= 1e9 ? '$' + (n / 1e9).toFixed(1).replace(/\.0$/, '') + 'B' : n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e7 ? 1 : 2).replace(/\.0+$/, '') + 'M' : n >= 1e4 ? '$' + Math.round(n / 1e3) + 'K' : usd(n);
+// Per-child amounts can be tiny in big ZIPs, so show fractions of a cent instead of "$0.00".
+const perKidFmt = v => v >= 0.01 ? usd(v, 2) : v > 0 ? (v * 100).toFixed(v * 100 >= 0.1 ? 2 : 3) + '¢' : '$0';
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+/* ---------- Data ---------- */
+const proj = d3.geoAlbersUsa().scale(1300).translate([487.5, 305]);
+const ZIPS = [], ZI = new Map();
+for (const r of window.ZDATA.split(';')) {
+  const p = r.split(',');
+  // Kids 18 and under: Census age groups under 5, 5–9, 10–14, 15–17, plus an estimate of 18-year-olds
+  // (the Census reports ages 18 and 19 together, so half of that group is counted).
+  const ages = [+p[2], +p[3], +p[4], +p[5], +(p[10] || 0)];
+  const o = { z: p[0], pop: +p[1], ages, kids: ages.reduce((s, n) => s + n, 0), inc: p[6] ? +p[6] : null, lat: +p[7], lon: +p[8], sq: +p[9] };
+  o.ok = o.kids >= THRESHOLD;
+  const xy = proj([o.lon, o.lat]);
+  o.x = xy ? xy[0] : null; o.y = xy ? xy[1] : null;
+  ZIPS.push(o); ZI.set(o.z, o);
+}
+const PLACES = window.PDATA.split(';').map(r => { const p = r.split('|'); return { n: p[0], s: p[1], lat: +p[2], lon: +p[3], a: +p[4] }; });
+const placeCache = new Map();
+function placeFor(o) {
+  if (placeCache.has(o.z)) return placeCache.get(o.z);
+  const k = Math.cos(o.lat * Math.PI / 180);
+  let best = null, bs = Infinity;
+  for (const p of PLACES) {
+    const dy = p.lat - o.lat; if (dy > 1 || dy < -1) continue;
+    const dx = (p.lon - o.lon) * k;
+    const d = Math.sqrt(dx * dx + dy * dy) * 111;
+    const s = d - Math.sqrt(p.a * 2.59) / 1.8;
+    if (s < bs) { bs = s; best = p; }
+  }
+  const v = best ? { city: best.n, st: best.s } : { city: 'ZIP ' + o.z, st: '' };
+  placeCache.set(o.z, v); return v;
+}
+const label = o => { const p = placeFor(o); return p.st ? `${p.city}, ${p.st}` : p.city; };
+function miles(a, b) {
+  const R = 3958.8, t = Math.PI / 180, dLat = (b.lat - a.lat) * t, dLon = (b.lon - a.lon) * t;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * t) * Math.cos(b.lat * t) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+/* ---------- Simulated campaigns (seeded per ZIP) ---------- */
+function hashStr(s) { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rng(seed) { return () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
+const FIRST = ['Maria', 'James', 'Aisha', 'David', 'Priya', 'Luis', 'Grace', 'Marcus', 'Elena', 'Tom', 'Keisha', 'Daniel', 'Hannah', 'Omar', 'Sofia', 'Ben', 'Rachel', 'Andre', 'Mei', 'Carlos', 'Jen', 'Victor', 'Leah', 'Sam', 'Nadia', 'Chris', 'Tasha', 'Kevin', 'Ruth', 'Jorge'];
+const LAST = 'ABCDGHJKLMNOPRSTW';
+const MSGS = ['For every kid on our block.', 'Proud to chip in for our neighbors.', 'Giving in honor of my grandkids.', 'Small start, big future.', 'Go team!', 'Matched by my employer.', '', '', 'For the class of 2040.', 'Paying it forward.', 'Because every kid deserves a head start.', ''];
+const ORGS = c => [`${c} Little League`, `${c} Rotary Club`, `Main Street Hardware`, `${c} Credit Union`, `${c} Teachers Association`, `Corner Bakery of ${c}`];
+const ORGANIZERS = c => [`${c} Community Foundation`, `United Way of ${c}`, `${c} Parents Alliance`, `${c} Education Fund`, `Friends of ${c} Schools`];
+
+/* Signed-in account state (gifts, friends, follows). Saved per account: Apps Script properties when
+   running as a Google Apps Script web app, otherwise this browser's storage. */
+let USER = null;
+const S = { gifts: {}, friends: new Set(), following: new Set(), custom: [], campaigns: [], seen: 0 };
+function loadMine(z) { return S.gifts[z] || []; }
+function saveMine(z, list) { S.gifts[z] = list.slice(-40); persist(); }
+const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+const lsDel = k => { try { localStorage.removeItem(k); } catch {} };
+const GAS = !!(window.google && google.script && google.script.run);
+const gas = (fn, ...args) => new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...args));
+const Backend = {
+  login: email => GAS ? gas('login', email) : Promise.resolve({ email, state: lsGet('hs-user-' + email) }),
+  save: (email, json) => GAS ? gas('saveState', email, json).catch(e => toast('Your changes could not be saved. ' + (e && e.message || ''))) : lsSet('hs-user-' + email, json),
+  // google.script.run failures are already logged on the server; this catches ones that never reached it
+  report: msg => { if (GAS) try { google.script.run.logClientError(msg); } catch {} },
+};
+function serialize() {
+  const st = { gifts: JSON.parse(JSON.stringify(S.gifts)), friends: [...S.friends], following: [...S.following], custom: S.custom, campaigns: S.campaigns, seen: S.seen };
+  let json = JSON.stringify(st);
+  while (json.length > 8500) {  // Apps Script properties hold about 9 KB per value: drop the oldest gift
+    let oldK = null, oldI = -1, oldT = Infinity;
+    for (const [k, list] of Object.entries(st.gifts)) list.forEach((g, i) => { if (g.t < oldT) { oldT = g.t; oldK = k; oldI = i; } });
+    if (oldK === null) break;
+    st.gifts[oldK].splice(oldI, 1); if (!st.gifts[oldK].length) delete st.gifts[oldK];
+    json = JSON.stringify(st);
+  }
+  return json;
+}
+let saveT;
+function persist() { if (!USER) return; clearTimeout(saveT); saveT = setTimeout(() => Backend.save(USER.email, serialize()), 300); }
+
+// Running totals. ZIP and Area Fund campaigns have no money goal; community campaigns set their own.
+function campaign(o) {
+  const r = rng(hashStr(o.z));
+  let base, donors;
+  if (o.isCamp) {
+    base = o.camp.own ? 0 : Math.round(o.camp.goal * (0.08 + Math.pow(r(), 1.2) * 0.8) / 5) * 5;
+    donors = o.camp.own ? 0 : Math.max(6, Math.round(base / (60 + r() * 140)));
+  } else {
+    base = Math.round(o.kids * (15 + Math.pow(r(), 1.3) * 190) / 5) * 5;  // simulated: $15 to $205 per kid so far
+    donors = Math.max(14, Math.round(base / (55 + r() * 110)));
+  }
+  const mine = loadMine(o.z);
+  const mineSum = mine.reduce((s, g) => s + g.a, 0);
+  const gifts = NET_BY_ZIP.get(o.z) || [];
+  const giftSum = gifts.reduce((s, g) => s + g.a, 0);
+  const netGifts = gifts.filter(g => inNet(PI.get(g.pid)));
+  const netSum = netGifts.reduce((s, g) => s + g.a, 0) + mineSum;
+  const raised = base + giftSum + mineSum;
+  const week = Math.round(base * (0.02 + r() * 0.05)) + gifts.concat(mine).filter(g => g.t > NOW - WEEK).reduce((s, g) => s + g.a, 0);
+  const goal = o.isCamp ? o.camp.goal : 0;
+  return { r, base, raised, donors: donors + gifts.length + mine.length, mine, netGifts, netSum, week, goal, pct: goal ? raised / goal : 0, perKid: raised / o.kids };
+}
+// The bar's right end: the campaign goal, or the next round milestone above the running total.
+function milestone(v) {
+  for (let e = 3; e < 13; e++) for (const s of [1, 2, 2.5, 5]) { const m = s * 10 ** e; if (m > v) return m; }
+  return v;
+}
+function feedFor(o, c) {
+  const r = rng(hashStr('feed' + o.z)), city = placeFor(o).city, orgs = ORGS(city);
+  const mins = [4, 22, 60, 180, 360, 1500, 2900, 4400];
+  const list = mins.map(mn => {
+    const isOrg = r() < 0.2;
+    const anon = !isOrg && r() < 0.15;
+    const amt = isOrg ? pick(r, [1000, 2500, 5000, 10000]) : pick(r, [20, 25, 50, 50, 75, 100, 100, 150, 250, 250, 500]);
+    return { n: isOrg ? pick(r, orgs) : anon ? 'Anonymous' : `${pick(r, FIRST)} ${LAST[Math.floor(r() * LAST.length)]}.`, a: amt, m: pick(r, MSGS), t: NOW - mn * 60e3, kind: isOrg ? 'org' : 'none' };
+  });
+  const net = (NET_BY_ZIP.get(o.z) || []).map(g => { const p = PI.get(g.pid); return { n: p.n, a: g.a, m: g.m, t: g.t, kind: kindOf(p) }; });
+  const mine = c.mine.map(g => ({ n: g.n, a: g.a, m: g.m, t: g.t, kind: 'you', mo: g.mo }));
+  return mine.concat(net, list).sort((a, b) => b.t - a.t);
+}
+function ago(t) { const s = (Date.now() - t) / 1000; if (s < 60) return 'Just now'; if (s < 3600) return Math.floor(s / 60) + ' min ago'; if (s < 86400) return Math.floor(s / 3600) + ' hr ago'; const d = Math.floor(s / 86400); return d === 1 ? 'Yesterday' : d + ' days ago'; }
+const initials = n => n === 'Anonymous' ? '♥' : n.split(/\s+/).filter(w => /\w/.test(w[0] || '')).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+const av = (name, kind) => `<span class="avatar av-${kind || 'none'}">${esc(initials(name))}</span>`;
+const badge = kind => kind === 'friend' ? '<span class="badge friend">Friend</span>' : kind === 'major' ? '<span class="badge major">Following</span>' : kind === 'you' ? '<span class="badge you">You</span>' : '';
+
+/* ---------- Map drawing ---------- */
+const nation = topojson.feature(STATES, STATES.objects.nation);
+const borders = topojson.mesh(STATES, STATES.objects.states, (a, b) => a !== b);
+const mapped = ZIPS.filter(o => o.x !== null);
+const qt = d3.quadtree(mapped, o => o.x, o => o.y);
+
+function sizeCanvas(cv) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2), w = cv.clientWidth || cv.parentElement.clientWidth;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(w * H / W * dpr);
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr * w / W, 0, 0, dpr * w / W, 0, 0);
+  return { ctx, k: w / W };
+}
+function drawBase(cv, opts = {}) {
+  const { ctx, k } = sizeCanvas(cv);
+  ctx.clearRect(0, 0, W, H);
+  const path = d3.geoPath(null, ctx);
+  ctx.beginPath(); path(nation); ctx.fillStyle = css('--land'); ctx.fill();
+  ctx.beginPath(); path(borders); ctx.strokeStyle = css('--border-state'); ctx.lineWidth = 0.7 / Math.max(k, .5); ctx.stroke();
+  const dot = css('--dot'), green = css('--green');
+  const rs = opts.small ? 1.5 : 1.15, rg = opts.small ? 2 : 1.75;
+  ctx.globalAlpha = opts.faint ? .55 : 1;
+  ctx.fillStyle = dot;
+  for (const o of mapped) if (!o.ok) ctx.fillRect(o.x - rs / 2, o.y - rs / 2, rs, rs);
+  ctx.fillStyle = green;
+  ctx.globalAlpha = opts.faint ? .35 : .95;
+  for (const o of mapped) if (o.ok) { ctx.beginPath(); ctx.arc(o.x, o.y, rg / 2 + .2, 0, 6.2832); ctx.fill(); }
+  ctx.globalAlpha = 1;
+  if (!opts.small) {
+    refreshNetC();
+    const fr = css('--friend'), surf = css('--surface');
+    for (const z of NETC.keys()) {
+      const o = ZI.get(z); if (!o || o.x === null) continue;
+      ctx.beginPath(); ctx.arc(o.x, o.y, 5, 0, 6.2832); ctx.fillStyle = surf; ctx.fill();
+      ctx.beginPath(); ctx.arc(o.x, o.y, 3.6, 0, 6.2832); ctx.fillStyle = fr; ctx.fill();
+    }
+  }
+  if (opts.pin && opts.pin.x !== null) {
+    const p = opts.pin, c = p.ok ? green : css('--red');
+    ctx.beginPath(); ctx.arc(p.x, p.y, 22, 0, 6.2832); ctx.fillStyle = c; ctx.globalAlpha = .18; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, 6.2832); ctx.fillStyle = css('--surface'); ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, 6.2832); ctx.fillStyle = c; ctx.fill();
+  }
+}
+
+/* Home map + overlay (hover ring and live gift pings) */
+const base = $('#mapBase'), ov = $('#mapOv'), tip = $('#tip'), stage = $('#mapStage');
+let ovCtx, ovK = 1, hover = null, pings = [];
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function layoutHome() { drawBase(base); const s = sizeCanvas(ov); ovCtx = s.ctx; ovK = s.k; drawOverlay(performance.now()); }
+function drawOverlay(now) {
+  if (!ovCtx) return;
+  ovCtx.clearRect(0, 0, W, H);
+  const green = css('--green'), ink = css('--ink');
+  pings = pings.filter(p => now - p.t < 1600);
+  for (const p of pings) {
+    const e = (now - p.t) / 1600;
+    ovCtx.beginPath(); ovCtx.arc(p.o.x, p.o.y, 3 + e * 22, 0, 6.2832);
+    ovCtx.strokeStyle = green; ovCtx.globalAlpha = 1 - e; ovCtx.lineWidth = 2; ovCtx.stroke();
+    ovCtx.globalAlpha = 1; ovCtx.beginPath(); ovCtx.arc(p.o.x, p.o.y, 3.2, 0, 6.2832); ovCtx.fillStyle = green; ovCtx.fill();
+  }
+  if (hover) {
+    ovCtx.beginPath(); ovCtx.arc(hover.x, hover.y, 6.5, 0, 6.2832);
+    ovCtx.lineWidth = 2.2; ovCtx.strokeStyle = ink; ovCtx.stroke();
+    ovCtx.beginPath(); ovCtx.arc(hover.x, hover.y, 2.6, 0, 6.2832); ovCtx.fillStyle = hover.ok ? green : css('--dot'); ovCtx.fill();
+  }
+}
+function loop(now) { drawOverlay(now); if (pings.length) requestAnimationFrame(loop); }
+const eligibleZips = ZIPS.filter(o => o.ok);
+const mappedEligible = mapped.filter(o => o.ok);
+function ping() {
+  if ($('#home').hidden) return;
+  const r = Math.random;
+  const o = mappedEligible[Math.floor(r() * mappedEligible.length)];
+  const amt = [25, 50, 50, 100, 100, 250, 500][Math.floor(r() * 7)];
+  $('#tickerText').textContent = `${usd(amt)} just now to ${o.z} · ${label(o)}`;
+  if (!reduce) { const start = !pings.length; pings.push({ o, t: performance.now() }); if (start) requestAnimationFrame(loop); }
+  else drawOverlay(performance.now());
+}
+function pointAt(e) {
+  const rect = ov.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width * W, y = (e.clientY - rect.top) / rect.height * H;
+  return { x, y, o: qt.find(x, y, 9 / Math.max(ovK, .4) ) };
+}
+ov.addEventListener('mousemove', e => {
+  const { o } = pointAt(e);
+  if (o !== hover) { hover = o; drawOverlay(performance.now()); }
+  ov.classList.toggle('hot', !!o);
+  if (!o) { tip.hidden = true; return; }
+  tip.innerHTML = `<b>${o.z}</b> · ${esc(label(o))}<br>${fmt(o.kids)} kids · <span class="${o.ok ? 'ok' : ''}">${o.ok ? 'Eligible' : 'Not eligible'}</span>${!o.ok && FUNDS && FUND_OF.get(o.z) ? `<br>Part of the ${esc(fundName(FUND_OF.get(o.z)))}` : ''}${NETC.get(o.z) ? `<br>${NETC.get(o.z)} ${NETC.get(o.z) === 1 ? 'gift' : 'gifts'} from your network` : ''}`;
+  tip.style.left = (o.x / W * 100) + '%'; tip.style.top = (o.y / H * 100) + '%'; tip.hidden = false;
+});
+ov.addEventListener('mouseleave', () => { hover = null; tip.hidden = true; drawOverlay(performance.now()); });
+ov.addEventListener('click', e => { const { o } = pointAt(e); if (o) go(o.z); });
+
+/* ---------- Area Funds: small ZIPs pooled with their nearest small neighbors ---------- */
+let FUNDS = null;
+const FUND_MILES = 25;
+const FUND_OF = new Map(), FUND_BY_ANCHOR = new Map();
+function buildFunds() {
+  if (FUNDS) return FUNDS;
+  // Rule: every ZIP in a fund is within 25 miles of every other ZIP in it, and each ZIP is in one fund only.
+  const R = FUND_MILES, R2 = R * R;
+  const small = ZIPS.filter(o => !o.ok && o.kids > 0);
+  // The index uses a rough grid (x scaled for 38°N); real distances use each pair's own latitude.
+  for (const o of small) { o.px = o.lon * 69.09 * 0.79; o.py = o.lat * 69.09; }
+  const d2 = (a, b) => { const dy = (a.lat - b.lat) * 69.09, dx = (a.lon - b.lon) * 69.09 * Math.cos((a.lat + b.lat) / 360 * Math.PI); return dx * dx + dy * dy; };
+  const q = d3.quadtree(small, o => o.px, o => o.py);
+  const box = (o, r, x0, y0, x1, y1) => x0 > o.px + 2 * r || x1 < o.px - 2 * r || y0 > o.py + r || y1 < o.py - r;
+  const near = (s, r) => {  // free small ZIPs within r miles of s, nearest first
+    const out = [];
+    q.visit((node, x0, y0, x1, y1) => {
+      if (!node.length) { let d = node; do { const o = d.data; if (o !== s && !used.has(o) && d2(o, s) <= r * r) out.push(o); } while ((d = d.next)); }
+      return box(s, r, x0, y0, x1, y1);
+    });
+    return out.sort((a, b) => d2(a, s) - d2(b, s));
+  };
+  const fits = (g, c) => g.members.every(m => d2(m, c) <= R2);
+  const used = new Set(), full = [];
+  // Pass 1: grow a fund around each ZIP (largest first), adding the nearest neighbors that keep every pair within
+  // 25 miles. A seed that can't reach 5,000 releases its neighbors so another fund can use them.
+  for (const s of small.slice().sort((a, b) => b.kids - a.kids)) {
+    if (used.has(s)) continue;
+    const g = { members: [s], kids: s.kids };
+    for (const c of near(s, R)) { if (g.kids >= THRESHOLD) break; if (fits(g, c)) { g.members.push(c); g.kids += c.kids; } }
+    if (g.kids >= THRESHOLD) { g.members.forEach(m => used.add(m)); full.push(g); }
+  }
+  // Pass 2: leftover ZIPs join a complete fund if they are within 25 miles of all its members.
+  const groupOf = new Map(); full.forEach(g => g.members.forEach(m => groupOf.set(m, g)));
+  const left = small.filter(o => !used.has(o));
+  for (const o of left) {
+    const cands = new Set();
+    q.visit((node, x0, y0, x1, y1) => {
+      if (!node.length) { let d = node; do { const g = groupOf.get(d.data); if (g && d2(d.data, o) <= R2) cands.add(g); } while ((d = d.next)); }
+      return box(o, R, x0, y0, x1, y1);
+    });
+    const best = [...cands].filter(g => fits(g, o)).sort((a, b) => a.kids - b.kids)[0];
+    if (best) { best.members.push(o); best.kids += o.kids; used.add(o); groupOf.set(o, best); }
+  }
+  // Pass 3: whatever is left forms "forming" funds under the same 25-mile rule, still short of 5,000.
+  const forming = [];
+  for (const s of small.filter(o => !used.has(o)).sort((a, b) => b.kids - a.kids)) {
+    if (used.has(s)) continue;
+    const g = { members: [s], kids: s.kids }; used.add(s);
+    for (const c of near(s, R)) if (fits(g, c)) { g.members.push(c); g.kids += c.kids; used.add(c); }
+    forming.push(g);
+  }
+  FUNDS = full.concat(forming).map(g => {
+    const anchor = g.members[0];
+    const f = { id: 'A' + anchor.z, anchor, kids: g.kids, pop: g.members.reduce((s, m) => s + m.pop, 0), members: g.members.sort((a, b) => b.kids - a.kids) };
+    for (const m of f.members) FUND_OF.set(m.z, f);
+    FUND_BY_ANCHOR.set(anchor.z, f);
+    return f;
+  });
+  return FUNDS;
+}
+const fundOf = o => (buildFunds(), FUND_OF.get(o.z));
+const fundByAnchor = z => (buildFunds(), FUND_BY_ANCHOR.get(z));
+const fundName = f => f.name || (f.name = placeFor(f.anchor).city + ' Area Fund');
+const fundDest = f => `${fundName(f)}, ${placeFor(f.anchor).st}`;
+function fundCamp(f) {
+  return f.camp || (f.camp = { z: f.id, kids: f.kids, pop: f.pop, lat: f.anchor.lat, lon: f.anchor.lon, x: f.anchor.x, y: f.anchor.y, ok: true, isFund: true, fund: f });
+}
+const where = o => o.isCamp ? o.camp.name : o.isFund ? `the ${fundName(o.fund)}` : `ZIP ${o.z}`;
+const whereShort = o => o.isCamp ? o.camp.name : o.isFund ? fundName(o.fund) : `ZIP ${o.z}`;
+
+/* ---------- Donor network (simulated friends and followed major donors) ---------- */
+const NOW = Date.now(), HR = 3600e3, WEEK = 7 * 24 * HR;
+// Directory of fictional people: individuals can be friends or followed; major donors can be followed.
+const DIRECTORY = [
+  { id: 'maya', n: 'Maya Okafor', kind: 'person', role: 'Houston, TX' },
+  { id: 'jordan', n: 'Jordan Reyes', kind: 'person', role: 'Katy, TX' },
+  { id: 'priya', n: 'Priya Raman', kind: 'person', role: 'Chicago, IL' },
+  { id: 'tyler', n: 'Tyler Brooks', kind: 'person', role: 'Hialeah, FL' },
+  { id: 'hannah', n: 'Hannah Kim', kind: 'person', role: 'Los Angeles, CA' },
+  { id: 'marcus', n: 'Marcus Bell', kind: 'person', role: 'Houston, TX' },
+  { id: 'sofia', n: 'Sofia Alvarez', kind: 'person', role: 'Miami, FL' },
+  { id: 'ethan', n: 'Ethan Park', kind: 'person', role: 'Dallas, TX' },
+  { id: 'olivia', n: 'Olivia Grant', kind: 'person', role: 'Friend of Maya' },
+  { id: 'noah', n: 'Noah Castillo', kind: 'person', role: 'Friend of Jordan' },
+  { id: 'zara', n: 'Zara Ahmed', kind: 'person', role: 'Friend of Priya' },
+  { id: 'ben', n: 'Ben Nakamura', kind: 'person', role: 'Friend of Hannah' },
+  { id: 'chloe', n: 'Chloe Dubois', kind: 'person', role: 'Friend of Sofia' },
+  { id: 'isaac', n: 'Isaac Fuller', kind: 'person', role: 'Friend of Ethan' },
+  { id: 'whitfield', n: 'Whitfield Family Foundation', kind: 'major', role: 'Family foundation' },
+  { id: 'hale', n: 'Desmond Hale', kind: 'major', role: 'Founder, Hale Freight' },
+  { id: 'ibarra', n: 'Rosa & Ken Ibarra', kind: 'major', role: 'Philanthropists' },
+  { id: 'northbank', n: 'Northbank Community Trust', kind: 'major', role: 'Community trust' },
+  { id: 'marsh', n: 'Lena Marsh', kind: 'major', role: 'CEO, Marsh Outdoor' },
+  { id: 'haddad', n: 'Amir Haddad', kind: 'major', role: 'Founder, Haddad Health' },
+  { id: 'oakline', n: 'Oakline Partners', kind: 'major', role: 'Employer giving program' },
+];
+const DEFAULT_FRIENDS = ['maya', 'jordan', 'priya', 'tyler', 'hannah', 'marcus', 'sofia', 'ethan'];
+const DEFAULT_FOLLOW = ['whitfield', 'hale', 'ibarra', 'northbank'];
+const FOLLOWERS = ['olivia', 'zara', 'isaac', 'chloe', 'marcus', 'priya', 'noah'];  // people who follow you
+let PEOPLE = DIRECTORY.slice(), PI = new Map(PEOPLE.map(p => [p.id, p]));
+const friends = S.friends, following = S.following;
+const inNet = p => !!p && (friends.has(p.id) || following.has(p.id));
+const kindOf = p => !p ? 'none' : friends.has(p.id) ? 'friend' : following.has(p.id) ? 'major' : 'none';
+const firstName = p => p.kind === 'person' ? p.n.split(' ')[0] : p.n;
+
+const BIG_POOL = eligibleZips.slice().sort((a, b) => b.kids - a.kids).slice(0, 60).map(o => o.z);
+const CIRCLE = ['77449', '60629', '90011', '33012'].filter(z => ZI.get(z)?.ok).concat(BIG_POOL.slice(0, 4));
+const FMSG = ['For the kids on my old street.', 'Matched Jordan’s gift!', 'Happy to start these kids off right.', 'In honor of my daughter’s 5th birthday.', '', 'Our book club pooled this together.', 'Who’s next? Tagging the group chat.', '', 'My hometown. Let’s finish this.'];
+const MMSG = c => [`Proud to back every child in ${c}.`, `We will match the next $25,000 given here.`, `An investment in ${c}’s future.`, `Every kid in ${c} deserves a head start.`, ''];
+function giftsFor(p) {  // simulated gifts, seeded per person so they stay the same between visits
+  const r = rng(hashStr('gifts-' + p.id)), person = p.kind === 'person', out = [];
+  const n = person ? 2 + Math.floor(r() * 3) : 1 + Math.floor(r() * 3);
+  for (let i = 0; i < n; i++) {
+    const z = person || r() < .35 ? pick(r, CIRCLE) : pick(r, BIG_POOL);
+    const a = person ? pick(r, [25, 50, 100, 100, 250, 250, 500, 1000]) : pick(r, [10000, 25000, 25000, 50000, 100000, 250000]);
+    const m = person ? pick(r, FMSG) : pick(r, MMSG(placeFor(ZI.get(z)).city));
+    out.push({ pid: p.id, z, a, m, t: NOW - 12 * 60e3 - Math.floor(r() * WEEK * .95) });
+  }
+  return out;
+}
+let NET_GIFTS = [], NET_BY_ZIP = new Map();
+function rebuildNet() {
+  PEOPLE = DIRECTORY.concat(S.custom.map(c => ({ ...c, kind: 'person' })));
+  PI = new Map(PEOPLE.map(p => [p.id, p]));
+  NET_GIFTS = PEOPLE.flatMap(giftsFor);
+  NET_BY_ZIP = new Map();
+  for (const g of NET_GIFTS) { if (!NET_BY_ZIP.has(g.z)) NET_BY_ZIP.set(g.z, []); NET_BY_ZIP.get(g.z).push(g); }
+}
+function applyState(st) {
+  st = st || {};
+  S.gifts = st.gifts || {};
+  friends.clear(); (st.friends || DEFAULT_FRIENDS).forEach(id => friends.add(id));
+  following.clear(); (st.following || DEFAULT_FOLLOW).forEach(id => following.add(id));
+  S.custom = st.custom || [];
+  S.campaigns = st.campaigns || [];
+  S.seen = st.seen || NOW - 30 * HR;
+  rebuildNet();
+}
+applyState(null);
+const BIG_OTHERS = (() => {
+  const r = rng(hashStr('big-v1'));
+  return Array.from({ length: 12 }, () => {
+    const z = pick(r, BIG_POOL), city = placeFor(ZI.get(z)).city;
+    return { name: pick(r, [`${city} Community Foundation`, 'Anonymous', `United Way of ${city}`, `${city} Credit Union`, 'Anonymous', `Friends of ${city} Schools`]), z, a: pick(r, [5000, 10000, 15000, 20000, 40000, 75000]), m: '', t: NOW - 6e5 - Math.floor(r() * WEEK * .95) };
+  });
+})();
+function allMine() {
+  const out = [];
+  for (const key of Object.keys(S.gifts)) {
+    if (key[0] === 'C') {  // gifts to community campaigns
+      const cp = campById(key.slice(1)); if (!cp) continue;
+      for (const g of loadMine(key)) out.push({ ...g, z: null, camp: cp.id, dest: cp.name, you: true });
+      continue;
+    }
+    const f = key[0] === 'A' ? fundByAnchor(key.slice(1)) : null;
+    if (key[0] === 'A' ? !f : !ZI.has(key)) continue;
+    for (const g of loadMine(key)) out.push({ ...g, z: f ? f.anchor.z : key, dest: f ? fundDest(f) : '', you: true });
+  }
+  return out;
+}
+function networkFeed(filter = 'all') {
+  let list = NET_GIFTS.filter(g => inNet(PI.get(g.pid))).map(g => ({ ...g, p: PI.get(g.pid) }));
+  // campaigns started by people you know show up as updates too
+  const launches = netCamps().filter(cp => inNet(PI.get(cp.org))).map(cp => ({ launch: true, pid: cp.org, p: PI.get(cp.org), camp: cp.id, dest: cp.name, z: null, a: 0, m: cp.desc, t: cp.t }));
+  list = list.concat(launches.filter(g => filter === 'all' || (filter === 'friends' ? friends.has(g.pid) : !friends.has(g.pid))));
+  if (filter === 'friends') list = list.filter(g => friends.has(g.pid));
+  else if (filter === 'following') list = list.filter(g => !friends.has(g.pid));
+  else list = list.concat(allMine());
+  return list.sort((a, b) => b.t - a.t);
+}
+let NETC = new Map();
+function refreshNetC() { NETC = new Map(); for (const g of networkFeed('all')) if (g.z) NETC.set(g.z, (NETC.get(g.z) || 0) + 1); }
+function weekStats() { const w = networkFeed('all').filter(g => !g.launch && g.t > NOW - WEEK); return { total: w.reduce((s, g) => s + g.a, 0), zips: new Set(w.map(g => g.z || g.camp)).size }; }
+// Link to where a gift went: a ZIP, an Area Fund (opened through its anchor ZIP), or a community campaign.
+function destLink(g) {
+  if (g.camp) return `<button type="button" class="zlink" data-camp="${g.camp}">${esc(g.dest)}</button>`;
+  const o = ZI.get(g.z);
+  return `<button type="button" class="zlink" data-zip="${g.z}">${g.dest ? esc(g.dest) : `${esc(label(o))} <span class="num">${g.z}</span>`}</button>`;
+}
+
+function netItem(g) {
+  const who = g.you ? 'You' : g.p.n, kind = g.you ? 'you' : kindOf(g.p);
+  return `<article class="nitem k-${kind}">${av(who, kind)}<div style="min-width:0">
+    <p><b>${esc(who)}</b> ${g.launch ? 'started a campaign:' : `gave <b class="num">${usd(g.a)}</b> to`} ${destLink(g)}</p>
+    ${g.m ? `<blockquote>${esc(g.m)}</blockquote>` : ''}<small>${badge(kind)}${ago(g.t)}${g.mo ? ' · Monthly' : ''}</small></div></article>`;
+}
+/* People rows: each shows who they are, what they gave this week, and the actions that fit */
+let pendingRemove = null;
+function personRow(p, acts) {
+  const wk = NET_GIFTS.filter(g => g.pid === p.id && g.t > NOW - WEEK).reduce((s, g) => s + g.a, 0);
+  return `<div class="frow">${av(p.n, kindOf(p))}<div style="min-width:0"><b>${esc(p.n)}</b><small>${esc(p.role || '')}${wk ? ` · ${usdC(wk)} this week` : ''}</small></div><div class="acts">${acts}</div></div>`;
+}
+const followBtn = p => { const on = following.has(p.id); return `<button type="button" class="fbtn" data-follow="${p.id}" aria-pressed="${on}">${on ? 'Following' : 'Follow'}</button>`; };
+const addFriendBtn = p => `<button type="button" class="fbtn friend" data-friend="${p.id}" data-act="add">Add friend</button>`;
+const removeBtn = p => pendingRemove === p.id
+  ? `<button type="button" class="fbtn danger" data-friend="${p.id}" data-act="remove">Confirm</button><button type="button" class="fbtn plain" data-friend="${p.id}" data-act="cancel">Keep</button>`
+  : `<button type="button" class="fbtn plain" data-friend="${p.id}" data-act="ask">Remove</button>`;
+const followRow = p => personRow(p, followBtn(p));
+function section(title, count, body, empty) {
+  return `<section class="psec"><h3 class="dh">${title}${count === null ? '' : ` <span class="num">${count}</span>`}</h3><div class="follows">${body || `<p class="empty">${empty}</p>`}</div></section>`;
+}
+function peopleView() {
+  const fr = PEOPLE.filter(p => friends.has(p.id));
+  const fo = PEOPLE.filter(p => following.has(p.id) && !friends.has(p.id));
+  const fl = FOLLOWERS.map(id => PI.get(id)).filter(Boolean);
+  const may = PEOPLE.filter(p => p.kind === 'person' && !friends.has(p.id)).slice(0, 4);
+  const majors = PEOPLE.filter(p => p.kind === 'major' && !following.has(p.id));
+  return `
+    <form class="stack" id="addFriend" novalidate style="gap:8px">
+      <label class="field"><span>Add a friend</span>
+        <div class="addrow"><input class="input" id="addName" placeholder="Name or email" autocomplete="off"><button class="btn btn-green btn-sm" type="submit">Add</button></div></label>
+      <p class="err" id="addErr" role="alert"></p>
+    </form>
+    ${may.length ? section('People you may know', null, may.map(p => personRow(p, addFriendBtn(p))).join('')) : ''}
+    ${section('Friends', fr.length, fr.map(p => personRow(p, removeBtn(p))).join(''), 'No friends yet. Add someone above.')}
+    ${section('Following', fo.length, fo.map(followRow).join(''), 'You aren’t following anyone yet.')}
+    ${section('Followers', fl.length, fl.map(p => personRow(p, friends.has(p.id) ? '<span class="fbtn static">Friend</span>' : following.has(p.id) ? followBtn(p) : `<button type="button" class="fbtn" data-follow="${p.id}" aria-pressed="false">Follow back</button>`)).join(''), 'No followers yet.')}
+    ${majors.length ? section('Major donors to follow', null, majors.map(followRow).join('')) : ''}
+    <button class="btn btn-ghost" type="button" data-invite="">Invite friends</button>`;
+}
+
+/* Side panel */
+let netFilter = 'all', drawerTab = 'updates';
+function updateBadge() { const n = networkFeed('all').filter(g => !g.you && g.t > S.seen).length, b = $('#netCount'); b.textContent = n > 9 ? '9+' : n; b.hidden = !n; }
+function renderNetStack() { $('#netStack').innerHTML = PEOPLE.filter(p => friends.has(p.id)).slice(0, 3).map(p => av(p.n, 'friend')).join(''); }
+function renderDrawer() {
+  const nPeople = PEOPLE.filter(p => friends.has(p.id) || following.has(p.id)).length;
+  const top = `<div class="seg wide" role="tablist" aria-label="Network views"><button type="button" role="tab" data-dtab="updates" aria-pressed="${drawerTab === 'updates'}">Updates</button><button type="button" role="tab" data-dtab="people" aria-pressed="${drawerTab === 'people'}">People <span class="num">${nPeople}</span></button></div>`;
+  if (drawerTab === 'people') { $('#drawerBody').innerHTML = top + peopleView(); return; }
+  const { total, zips } = weekStats(), list = networkFeed(netFilter);
+  const tabs = [['all', 'All'], ['friends', 'Friends'], ['following', 'Following']];
+  $('#drawerBody').innerHTML = top + `
+    <div class="netsum"><span class="eyebrow">This week</span><span class="num big">${usd(total)}</span><p>given by you and your network to <b>${zips} ZIP codes</b></p>
+      <span class="avstack">${PEOPLE.filter(inNet).slice(0, 7).map(p => av(p.n, kindOf(p))).join('')}</span></div>
+    <div class="seg" role="group" aria-label="Filter updates">${tabs.map(([f, l]) => `<button type="button" data-netfilter="${f}" aria-pressed="${netFilter === f}">${l}</button>`).join('')}</div>
+    <div class="nfeed">${list.length ? list.slice(0, 30).map(netItem).join('') : '<p class="empty">Nothing here yet. Add friends or follow donors in People.</p>'}</div>
+    <button class="btn btn-ghost" type="button" data-dtab="people">Manage people</button>`;
+}
+function addFriend(raw) {
+  const v = raw.trim(), err = m => { $('#addErr').textContent = m; $('#addName').focus(); };
+  if (!v) return err('Enter a name or an email address.');
+  let name = v;
+  if (v.includes('@')) {
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) return err('That email address doesn’t look right.');
+    name = v.split('@')[0].replace(/[\d]+/g, '').replace(/[._-]+/g, ' ').trim().replace(/\b\w/g, c => c.toUpperCase()) || v;
+  }
+  if (name.length < 2) return err('Enter at least 2 letters.');
+  const ex = PEOPLE.find(p => p.n.toLowerCase() === name.toLowerCase());
+  if (ex && ex.kind === 'major') { following.add(ex.id); toast(`Following ${ex.n}`); }
+  else if (ex && friends.has(ex.id)) return err(`${ex.n} is already your friend.`);
+  else if (ex) { friends.add(ex.id); toast(`${ex.n} added to your friends`); }
+  else {
+    const id = 'c' + hashStr(name.toLowerCase()).toString(36);
+    S.custom.push({ id, n: name, role: 'Added by you' }); friends.add(id); rebuildNet();
+    toast(`${name} added to your friends`);
+  }
+  persist(); refreshNetwork();
+}
+function openDrawer() {
+  renderDrawer();
+  const d = $('#drawer'); d.inert = false; d.classList.add('open'); d.setAttribute('aria-hidden', 'false');
+  $('#scrim').hidden = false; $('#netBtn').setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden';
+  S.seen = Date.now(); persist();
+  updateBadge(); setTimeout(() => $('#drawerClose').focus(), 60);
+}
+function closeDrawer(refocus = true) {
+  const d = $('#drawer'); if (!d.classList.contains('open')) return;
+  d.classList.remove('open'); d.setAttribute('aria-hidden', 'true'); d.inert = true;
+  $('#scrim').hidden = true; $('#netBtn').setAttribute('aria-expanded', 'false'); document.body.style.overflow = '';
+  if (refocus) $('#netBtn').focus();
+}
+$('#drawerClose').addEventListener('click', () => closeDrawer());
+$('#scrim').addEventListener('click', () => closeDrawer());
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (!$('#builder').hidden) closeBuilder(); else closeDrawer(); toggleAcct(false); } });
+document.addEventListener('submit', e => { if (e.target.id === 'addFriend') { e.preventDefault(); addFriend($('#addName').value); } });
+
+/* Mock sign-in: any email plus a 4+ character password. The password is checked for length only and never stored or sent. */
+const DEMO_EMAIL = 'demo@hometownseed.org';
+function nameFrom(email) {
+  if (email === DEMO_EMAIL) return 'Alex Morgan';
+  const n = email.split('@')[0].replace(/\d+/g, '').replace(/[._-]+/g, ' ').trim().replace(/\b\w/g, c => c.toUpperCase());
+  return n || email;
+}
+async function signIn(email) {
+  const btn = $('#loginBtn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Signing in';
+  try {
+    const r = await Backend.login(email);
+    const st = r && r.state ? (typeof r.state === 'string' ? JSON.parse(r.state) : r.state) : null;
+    USER = { email: r.email || email, name: nameFrom(r.email || email) };
+    applyState(st); lsSet('hs-session', USER.email);
+    if (!st) persist();
+    $('#login').hidden = true;
+    $('#acctBtn').hidden = false; $('#acctAv').textContent = initials(USER.name);
+    $('#acctName').textContent = USER.name; $('#acctEmail').textContent = USER.email;
+    refreshNetwork(); renderTopCards();
+    if (current) renderDash(ZI.get(current));
+    toast(`Signed in as ${USER.name}`);
+  } catch (e) {
+    $('#loginErr').textContent = (e && e.message) || 'Sign-in didn’t work. Try again.';
+    Backend.report('Sign-in error in browser: ' + ((e && e.message) || e));
+  } finally { btn.disabled = false; btn.textContent = 'Sign in'; }
+}
+function signOut() {
+  clearTimeout(saveT); if (USER) Backend.save(USER.email, serialize());
+  USER = null; lsDel('hs-session'); applyState(null);
+  toggleAcct(false); closeDrawer(false); $('#acctBtn').hidden = true;
+  $('#loginForm').reset(); $('#loginErr').textContent = ''; $('#login').hidden = false;
+  goHome(); setTimeout(() => $('#loginEmail').focus(), 50);
+}
+function toggleAcct(open) {
+  const m = $('#acctMenu'); open = open === undefined ? m.hidden : open;
+  m.hidden = !open; $('#acctBtn').setAttribute('aria-expanded', String(open));
+}
+$('#loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = $('#loginEmail').value.trim().toLowerCase(), pw = $('#loginPass').value;
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { $('#loginErr').textContent = 'Enter a valid email address.'; $('#loginEmail').focus(); return; }
+  if (pw.length < 4) { $('#loginErr').textContent = 'Use a password of at least 4 characters.'; $('#loginPass').focus(); return; }
+  $('#loginPass').value = '';
+  signIn(email);
+});
+$('#demoBtn').addEventListener('click', () => signIn(DEMO_EMAIL));
+$('#acctBtn').addEventListener('click', e => { e.stopPropagation(); toggleAcct(); });
+$('#logoutBtn').addEventListener('click', signOut);
+document.addEventListener('click', e => { if (!e.target.closest('#acctMenu') && !e.target.closest('#acctBtn')) toggleAcct(false); });
+
+/* Homepage: biggest gifts this week + network preview */
+function leaderRow(g, i) {
+  const name = g.you ? 'You' : g.p ? g.p.n : g.name;
+  const kind = g.you ? 'you' : g.p ? kindOf(g.p) : g.name === 'Anonymous' ? 'none' : 'org';
+  const follow = g.p && g.p.kind === 'major' && !following.has(g.p.id) ? `<button type="button" class="fbtn sm" data-follow="${g.p.id}" aria-pressed="false">Follow</button>` : '';
+  return `<div class="lrow k-${kind}"><span class="rank num">${i + 1}</span>${av(name, kind)}<div style="min-width:0">
+    <p class="lname"><b>${esc(name)}</b>${badge(kind)}${follow}</p>
+    <p class="lto">to ${destLink(g)} · ${ago(g.t)}</p>
+    ${g.m ? `<p class="lmsg">“${esc(g.m)}”</p>` : ''}</div><span class="lamt num">${usdC(g.a)}</span></div>`;
+}
+function renderHomeNetwork() {
+  const f = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  $('#weekRange').textContent = `${f(new Date(NOW - 6 * 24 * HR))} to ${f(new Date(NOW))}`;
+  const rows = NET_GIFTS.map(g => ({ ...g, p: PI.get(g.pid) })).concat(BIG_OTHERS, allMine()).filter(g => g.t > NOW - WEEK).sort((a, b) => b.a - a.a).slice(0, 8);
+  $('#leaderList').innerHTML = rows.map(leaderRow).join('');
+  const { total, zips } = weekStats();
+  $('#netPreviewSum').innerHTML = `<p class="meter-note" style="margin:0 0 16px">Your network gave <b class="num">${usd(total)}</b> to <b>${zips} ZIP codes</b> this week.</p>`;
+  $('#netPreviewList').innerHTML = networkFeed('all').slice(0, 5).map(netItem).join('');
+}
+
+/* Dashboard network pieces */
+function netStrip(o, c) {
+  const people = [...new Map(c.netGifts.map(g => [g.pid, PI.get(g.pid)])).values()];
+  if (!people.length && !c.mine.length) {
+    return `<div class="netstrip none" id="netStrip"><span class="avstack">${PEOPLE.filter(p => p.kind === 'person').slice(0, 3).map(p => av(p.n, 'none')).join('')}</span><span>No one in your network has given here yet. Be the first, then bring friends along.</span><button class="btn btn-ghost btn-sm" type="button" data-invite="${o.z}">Invite friends</button></div>`;
+  }
+  const who = (c.mine.length ? ['You'] : []).concat(people.map(firstName));
+  const txt = who.length <= 2 ? who.join(' and ') : `${who.slice(0, 2).join(', ')} and ${who.length - 2} more`;
+  const avs = (c.mine.length ? [av('You', 'you')] : []).concat(people.map(p => av(p.n, kindOf(p)))).slice(0, 5).join('');
+  return `<div class="netstrip" id="netStrip"><span class="avstack">${avs}</span><span>Your network gave <b class="num">${usd(c.netSum)}</b> here · ${esc(txt)}</span><button class="btn btn-ghost btn-sm" type="button" data-open-network>View network</button></div>`;
+}
+function barKey(c) {
+  return `<div class="barkey" id="barKey"><span><i class="kt"></i>All donors <b>${usdC(c.raised)}</b></span><span><i class="kf"></i>You and your network <b>${usdC(c.netSum)}</b></span></div>`;
+}
+function setNetBar(c) {
+  const pn = $('#pbarNet'), t = $('#tally'); if (!pn || !t) return;
+  pn.style.width = Math.min(100, c.netSum / +t.dataset.top * 100).toFixed(3) + '%'; pn.style.minWidth = c.netSum ? '10px' : '0';
+}
+function updateDashNetwork(o) {
+  const c = campaign(o);
+  const ns = $('#netStrip'); if (ns) ns.outerHTML = netStrip(o, c);
+  const bk = $('#barKey'); if (bk) bk.outerHTML = barKey(c);
+  updateTally(o, c);
+  const fp = $('#feedPanel'); if (fp) fp.outerHTML = feedPanel(o, c);
+}
+function refreshNetwork() {
+  updateBadge(); renderNetStack();
+  if ($('#drawer').classList.contains('open')) renderDrawer();
+  if (!$('#home').hidden) { renderHomeNetwork(); renderCampFeed(); drawBase(base); }
+  else if (currentCamp) updateDashNetwork(currentCamp);
+}
+function invite(z) {
+  const f = z && z[0] === 'A' ? fundByAnchor(z.slice(1)) : null;
+  const dest = f ? `the ${fundDest(f)}` : z ? `ZIP ${z} (${label(ZI.get(z))})` : '';
+  const cp = z && z[0] === 'C' ? campById(z.slice(1)) : null;
+  if (cp) { shareCamp(cp); return; }
+  const text = z ? `I'm helping fund Trump Accounts for the kids in ${dest}. Join me on Hometown Seed.` : `Join my donor network on Hometown Seed and see where our gifts go.`;
+  copyText(text, 'Invite message copied');
+}
+function copyText(text, msg) {
+  try { navigator.clipboard.writeText(text).then(() => toast(msg), () => toast(text)); } catch { toast(text); }
+}
+
+/* ---------- Community campaigns: your own list of places, with a goal ---------- */
+const NOUNS = ['Seed Squad', 'Sprout Society', 'Nest Egg Crew', 'Piggy Bank Posse', 'Little Acorns', 'Future Fund', 'Penny Parade', 'Head Start Club', 'Tiny Titans', 'Starter Stack', 'Grow Crew', 'Dream Big Drive'];
+function funName(zips, seed) {
+  const r = rng(hashStr(String(seed))), cities = [...new Set(zips.map(o => placeFor(o).city))];
+  const n = pick(r, NOUNS), a = cities[0] || 'Hometown', b = cities[1];
+  const forms = b ? [`${a} to ${b} ${n}`, `${a} & ${b} ${n}`, `The ${a} ${n}`, `${n} of ${a} & Friends`] : [`${a} ${n}`, `The ${a} ${n}`, `${n} of ${a}`, `Team ${a} ${n}`];
+  return pick(r, forms);
+}
+// What has gone to each kid in this ZIP so far, through its own campaign or its Area Fund.
+const perKidCache = new Map();
+function perKidGiven(o) {
+  if (perKidCache.has(o.z)) return perKidCache.get(o.z);
+  let v = 0;
+  if (o.ok) v = campaign(o).perKid;
+  else { const f = fundOf(o); if (f && f.kids >= THRESHOLD) v = campaign(fundCamp(f)).perKid; }
+  perKidCache.set(o.z, v); return v;
+}
+// Fill a list of places up to 5,000 kids: nearby communities first (25, then 50, 100, 250 miles), favoring
+// places that have received the least per kid so far and places big enough to close the gap.
+function fillTo5000(picked, rand = Math.random, exclude = new Set()) {
+  let kids = picked.reduce((s, o) => s + o.kids, 0);
+  const added = [], have = new Set(picked.map(o => o.z));
+  if (!picked.length || kids >= THRESHOLD) return added;
+  for (const R of [FUND_MILES, 50, 100, 250]) {
+    const cand = ZIPS.filter(o => o.kids > 0 && !have.has(o.z) && !exclude.has(o.z) && picked.some(p => Math.abs(p.lat - o.lat) < R / 69 && miles(p, o) <= R));
+    const scored = cand.map(o => {
+      const need = THRESHOLD - kids;
+      const size = Math.sqrt(Math.min(o.kids, Math.max(need, 300) * 1.2));
+      return { o, s: size / (1 + perKidGiven(o) / 40) * (o.ok ? 0.5 : 1) * (0.6 + 0.8 * rand()) };
+    }).sort((a, b) => b.s - a.s);
+    for (const { o } of scored) { if (kids >= THRESHOLD) break; added.push(o); have.add(o.z); kids += o.kids; }
+    if (kids >= THRESHOLD) break;
+  }
+  return added;
+}
+// ZIPs for a city. Small towns (under 20 sq mi) get the one ZIP closest to the town center; bigger cities get
+// every ZIP whose center falls inside the city's approximate radius (largest 12).
+function zipsForPlace(p) {
+  const r = Math.sqrt(p.a / Math.PI) + 0.5;
+  const near = ZIPS.filter(o => o.kids > 0 && Math.abs(o.lat - p.lat) < 1 && miles(o, p) <= Math.max(r, 30)).sort((a, b) => miles(a, p) - miles(b, p));
+  const inside = p.a >= 20 ? near.filter(o => miles(o, p) <= r) : [];
+  const list = inside.length ? inside : near.slice(0, 1);
+  return list.sort((a, b) => b.kids - a.kids).slice(0, 12);
+}
+function placeSearch(q) {
+  q = q.trim();
+  if (!q) return [];
+  if (/^\d{2,5}$/.test(q)) return ZIPS.filter(o => o.kids > 0 && o.z.startsWith(q)).slice(0, 6).map(o => ({ o, label: label(o), sub: `${o.z} · ${fmt(o.kids)} kids` }));
+  const [nm, st] = q.toLowerCase().split(',').map(s => s.trim());
+  if (!nm || nm.length < 2) return [];
+  return PLACES.filter(p => p.n.toLowerCase().startsWith(nm) && (!st || p.s.toLowerCase().startsWith(st)))
+    .sort((a, b) => (b.n.toLowerCase() === nm) - (a.n.toLowerCase() === nm) || b.a - a.a).slice(0, 6)
+    .map(p => ({ p, label: `${p.n}, ${p.s}`, sub: 'City or town' }));
+}
+
+// Campaigns started by people in the directory (simulated) plus the ones you create (saved to your account).
+let NET_CAMPS = null;
+const CDESC = ['Every kid on these blocks deserves a head start. We are pooling our gifts so none of them are left out.', 'My hometown and the places my family lives now, together in one campaign.', 'Small towns that rarely get attention. Let’s change that.', 'We picked the communities we love and the ones that have received the least so far.'];
+function netCamps() {
+  if (NET_CAMPS) return NET_CAMPS;
+  const r = rng(hashStr('camps-v2'));
+  const pool = ZIPS.filter(o => o.kids >= 300 && o.kids < 4000 && o.x !== null);
+  const owners = ['maya', 'jordan', 'priya', 'hannah', 'sofia', 'olivia', 'zara', 'ethan', 'whitfield', 'hale', 'ibarra', 'marsh'];
+  NET_CAMPS = owners.map((pid, i) => {
+    const picked = [pool[Math.floor(r() * pool.length)]];
+    if (r() < .45) picked.push(pool[Math.floor(r() * pool.length)]);
+    const all = picked.concat(fillTo5000(picked, r));
+    const kids = all.reduce((s, o) => s + o.kids, 0), major = PI.get(pid).kind === 'major';
+    const perKid = major ? pick(r, [50, 75, 100]) : pick(r, [10, 15, 20, 25]);
+    const goal = Math.max(5000, Math.round(kids * perKid / 1000) * 1000);
+    const co = DIRECTORY.filter(p => p.kind === 'person' && p.id !== pid).filter(() => r() < .18).slice(0, 2).map(p => p.id);
+    return { id: 'n' + i.toString(36) + hashStr(pid).toString(36).slice(0, 4), name: funName(picked, pid + i), org: pid, co, picked: picked.map(o => o.z), zips: all.map(o => o.z), goal, desc: pick(r, CDESC), t: NOW - Math.floor((2 + r() * 300) * HR) };
+  });
+  return NET_CAMPS;
+}
+const allCampaigns = () => S.campaigns.map(c => ({ ...c, own: true })).concat(netCamps());
+const campById = id => allCampaigns().find(c => c.id === id);
+const campCache = new Map();
+function campObj(cp) {
+  const key = cp.id + ':' + cp.zips.join(',') + ':' + cp.goal;
+  if (campCache.has(key)) return campCache.get(key);
+  const members = cp.zips.map(z => ZI.get(z)).filter(Boolean), a = members[0] || ZIPS[0];
+  const o = { z: 'C' + cp.id, kids: members.reduce((s, m) => s + m.kids, 0), pop: members.reduce((s, m) => s + m.pop, 0), lat: a.lat, lon: a.lon, x: a.x, y: a.y, ok: true, isCamp: true, camp: cp, members };
+  campCache.set(key, o); return o;
+}
+function campTeam(cp) {
+  const lead = cp.own ? { n: USER ? USER.name : 'You', kind: 'you' } : { n: PI.get(cp.org).n, kind: kindOf(PI.get(cp.org)) };
+  return [lead].concat((cp.co || []).map(id => PI.get(id)).filter(Boolean).map(p => ({ n: p.n, kind: kindOf(p) })));
+}
+const campInNet = cp => cp.own || inNet(PI.get(cp.org)) || (cp.co || []).some(id => inNet(PI.get(id)));
+const placeNames = cp => [...new Set(cp.zips.map(z => ZI.get(z)).filter(Boolean).map(label))];
+function shareCamp(cp) {
+  const o = campObj(cp), names = placeNames(cp);
+  const text = `Join "${cp.name}" on Hometown Seed. It's funding Trump Accounts for ${fmt(o.kids)} kids in ${names.slice(0, 3).join(', ')}${names.length > 3 ? ` and ${names.length - 3} more places` : ''}. Goal: ${usd(cp.goal)}. Search "${cp.name}" or code ${cp.id} under Community campaigns.`;
+  copyText(text, 'Campaign link copied to share');
+}
+
+/* Campaign feed on the homepage */
+let campFilter = 'all';
+function campCard(cp) {
+  const o = campObj(cp), c = campaign(o), team = campTeam(cp), names = placeNames(cp);
+  const tone = 't' + (hashStr(cp.id) % 4);
+  return `<article class="ccard camp">
+    <button type="button" class="cc-main" data-camp="${cp.id}">
+      <div class="cc-top"><span class="mono-tile ${tone}">${esc(initials(cp.name))}</span><div style="min-width:0"><b class="cc-name">${esc(cp.name)}</b><small>by ${esc(team[0].n)}${badge(team[0].kind)}</small></div></div>
+      <p class="cc-places">${esc(names.slice(0, 2).join(' · '))}${names.length > 2 ? ` + ${names.length - 2} more` : ''}</p>
+      <div class="bar"><span style="width:${Math.min(100, c.pct * 100).toFixed(1)}%"></span></div>
+      <div class="meta"><span><b class="num">${usdC(c.raised)}</b> of ${usdC(cp.goal)}</span><span><b>${Math.floor(c.pct * 100)}%</b></span></div>
+      <div class="meta"><span>${fmt(o.kids)} kids · ${cp.zips.length} ZIPs</span><span>${ago(cp.t)}</span></div>
+    </button>
+    <button type="button" class="cc-share" data-share-camp="${cp.id}" aria-label="Share ${esc(cp.name)}">${ICON.share}</button>
+  </article>`;
+}
+function renderCampFeed() {
+  const q = ($('#campSearch').value || '').trim().toLowerCase();
+  let list = allCampaigns();
+  if (campFilter === 'network') list = list.filter(campInNet);
+  if (campFilter === 'yours') list = list.filter(c => c.own);
+  if (q) list = list.filter(cp => [cp.name, cp.id, campTeam(cp).map(t => t.n).join(' '), placeNames(cp).join(' '), cp.zips.join(' ')].join(' ').toLowerCase().includes(q));
+  list.sort((a, b) => (b.own - a.own) || (campInNet(b) - campInNet(a)) || b.t - a.t);
+  $('#campCount').textContent = `${list.length} ${list.length === 1 ? 'campaign' : 'campaigns'}`;
+  $('#campCards').innerHTML = list.length ? list.slice(0, 9).map(campCard).join('')
+    : `<div class="panel empty-state"><p>${q ? `No campaigns match “${esc(q)}”.` : campFilter === 'yours' ? 'You haven’t started a campaign yet.' : 'No campaigns here yet.'}</p><button class="btn btn-green btn-sm" type="button" data-start>Start a campaign</button></div>`;
+}
+$('#campSearch').addEventListener('input', renderCampFeed);
+
+/* Campaign page */
+function placesPanel(o) {
+  const cp = o.camp, picked = new Set(cp.picked);
+  const ms = o.members.slice().sort((a, b) => picked.has(b.z) - picked.has(a.z) || b.kids - a.kids);
+  const scale = Math.max(o.kids, THRESHOLD), thr = THRESHOLD / scale * 100;
+  const row = m => `<button type="button" class="mrow ${picked.has(m.z) ? 'me' : ''}" data-zip="${m.z}"><span class="num">${m.z}</span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(label(m))}</span><span class="num">${fmt(m.kids)}</span><small>${picked.has(m.z) ? 'Picked' : 'Added'}</small></button>`;
+  return `
+  <section class="panel" id="fundPanel">
+    <div class="panel-head"><div><p class="eyebrow">Places in this campaign</p><h2 style="margin-top:4px">${cp.zips.length} ZIP codes</h2></div><span class="eyebrow">${fmt(o.kids)} kids</span></div>
+    <div class="fundmap"><canvas id="fundMap" role="img" aria-label="Map of the places in ${esc(cp.name)}"></canvas></div>
+    <div class="fundbar-wrap" aria-hidden="true">
+      <div class="fundbar">${ms.map(m => `<span class="${picked.has(m.z) ? 'me' : ''}" style="flex:${m.kids} 0 0"></span>`).join('')}</div>
+      <span class="thr ${thr > 70 ? 'flip' : ''}" style="left:${thr.toFixed(2)}%"><b>${fmt(THRESHOLD)} kids</b></span>
+    </div>
+    <p class="meter-note" style="margin-top:10px">Green places were picked by the organizers. ${cp.picked.length < cp.zips.length ? 'The rest were added to reach 5,000 kids, favoring nearby communities that have received the least so far.' : ''}</p>
+    <div class="mlist"><div class="mhead"><span>ZIP</span><span>Place</span><span>Kids</span><span>Source</span></div>${ms.slice(0, 8).map(row).join('')}
+      ${ms.length > 8 ? `<details class="more"><summary>Show all ${ms.length} ZIPs</summary>${ms.slice(8).map(row).join('')}</details>` : ''}</div>
+  </section>`;
+}
+let currentCampId = null;
+function renderCamp(cp) {
+  const o = campObj(cp), c = campaign(o), names = placeNames(cp);
+  current = null; currentCampId = cp.id; currentCamp = o;
+  const dash = $('#dash');
+  dash.innerHTML = `
+  <div class="wrap dash-head">
+    <div class="crumbs">
+      <button class="back" type="button" id="backBtn">${ICON.back}All campaigns</button>
+      <form class="search mini" id="dashSearch" novalidate><label for="dashZip"><input id="dashZip" inputmode="numeric" maxlength="5" placeholder="Find a ZIP" aria-label="Find a ZIP code"></label><button class="btn btn-green" type="submit">Go</button></form>
+    </div>
+    <div class="title-row">
+      <div style="min-width:0"><h1>${esc(cp.name)}</h1>
+        <p style="max-width:70ch">${cp.desc ? esc(cp.desc) + ' ' : ''}For ${fmt(o.kids)} kids in ${esc(names.slice(0, 3).join(', '))}${names.length > 3 ? ` and ${names.length - 3} more places` : ''}.</p></div>
+      <span class="pill ok">${ICON.check}${campInNet(cp) && !cp.own ? 'From your network' : cp.own ? 'Your campaign' : 'Community campaign'}</span>
+    </div>
+  </div>
+  <div class="wrap grid">
+    <div class="col">${goalPanel(o, c)}${donatePanel(o)}</div>
+    <div class="col">${placesPanel(o)}${feedPanel(o, c)}${aboutPanel()}</div>
+  </div>`;
+  $('#home').hidden = true; dash.hidden = false; tip.hidden = true;
+  window.scrollTo({ top: 0 });
+  requestAnimationFrame(() => requestAnimationFrame(() => updateTally(o, c)));
+  $('#backBtn').addEventListener('click', () => { goHome(); setTimeout(() => $('#campaigns').scrollIntoView(), 40); });
+  bindSearch($('#dashSearch'), $('#dashZip'), null);
+  wireDonate(o);
+  drawFundMap($('#fundMap'), { members: o.members }, null, { hull: false, hi: new Set(cp.picked) });
+}
+function goCamp(id) {
+  const cp = campById(id); if (!cp) { toast('That campaign is no longer available.'); return; }
+  renderCamp(cp);
+  try { if (location.hash !== '#c' + id) location.hash = 'c' + id; } catch {}
+}
+
+/* Campaign builder */
+const B = { picked: [], removed: new Set(), added: [], seed: 1, co: new Set(), goalTouched: false };
+function openBuilder(startZip) {
+  B.picked = startZip && ZI.has(startZip) ? [ZI.get(startZip)] : []; B.removed = new Set(); B.co = new Set(); B.seed = Date.now(); B.goalTouched = false;
+  $('#bForm').reset(); $('#bErr').textContent = ''; $('#bSugg').hidden = true;
+  refill(); renderBuilder();
+  $('#bName').value = B.picked.length ? funName(B.picked, B.seed) : '';
+  $('#builder').hidden = false; document.body.style.overflow = 'hidden';
+  setTimeout(() => $('#bSearch').focus(), 50);
+}
+function closeBuilder() { $('#builder').hidden = true; document.body.style.overflow = ''; }
+function refill() { B.added = fillTo5000(B.picked, rng(B.seed), B.removed); }
+const bKids = () => B.picked.concat(B.added).reduce((s, o) => s + o.kids, 0);
+function renderBuilder() {
+  const kids = bKids(), pk = B.picked.reduce((s, o) => s + o.kids, 0), scale = Math.max(kids, THRESHOLD), thr = THRESHOLD / scale * 100;
+  const row = (o, type) => `<li class="prow"><div style="min-width:0"><b>${esc(label(o))}</b><small><span class="num">${o.z}</span> · <span class="ptag ${type}">${type === 'pick' ? 'Your pick' : 'Suggested'}</span>${type === 'sugg' ? ` · ${usd(perKidGiven(o))} per kid so far` : ''}</small></div><span class="num">${fmt(o.kids)} kids</span><button type="button" class="xbtn" data-bremove="${o.z}" aria-label="Remove ${esc(label(o))}">${ICON.x}</button></li>`;
+  $('#bPlaces').innerHTML = !B.picked.length ? '<p class="empty">Add at least one place. You can mix ZIP codes and cities from anywhere in the U.S.</p>' : `
+    <div class="fundbar-wrap" aria-hidden="true">
+      <div class="fundbar">${B.picked.map(o => `<span class="me" style="flex:${o.kids} 0 0"></span>`).join('')}${B.added.map(o => `<span style="flex:${o.kids} 0 0"></span>`).join('')}${kids < THRESHOLD ? `<span class="gap" style="flex:${THRESHOLD - kids} 0 0"></span>` : ''}</div>
+      <span class="thr ${thr > 70 ? 'flip' : ''}" style="left:${thr.toFixed(2)}%"><b>${fmt(THRESHOLD)} kids</b></span>
+    </div>
+    <p class="meter-note" style="margin:8px 0 4px"><b>${fmt(kids)} kids</b> in ${B.picked.length + B.added.length} ZIP codes. ${pk >= THRESHOLD ? 'Your picks reach 5,000 on their own.' : kids >= THRESHOLD ? `Your picks have ${fmt(pk)}, so we suggested ${B.added.length === 1 ? '1 more place nearby that has' : `${B.added.length} more places nearby that have`} received the least per kid so far.` : `Still ${fmt(THRESHOLD - kids)} short. Add another place.`}</p>
+    <ul class="plist">${B.picked.map(o => row(o, 'pick')).join('')}${B.added.map(o => row(o, 'sugg')).join('')}</ul>
+    ${B.added.length ? '<button type="button" class="btn btn-ghost btn-sm" id="bShuffle">Suggest different places</button>' : ''}`;
+  const per = [10, 25, 50, 100];
+  $('#bGoalChips').innerHTML = kids ? per.map(p => { const g = Math.max(1000, Math.round(kids * p / 1000) * 1000); return `<button type="button" class="chip" data-bgoal="${g}" aria-pressed="${+$('#bGoal').value.replace(/\D/g, '') === g}">${usdC(g)} <small>$${p} per kid</small></button>`; }).join('') : '';
+  if (!B.goalTouched && kids) $('#bGoal').value = fmt(Math.max(1000, Math.round(kids * 25 / 1000) * 1000));
+  const fr = PEOPLE.filter(p => friends.has(p.id));
+  $('#bCo').innerHTML = fr.length ? fr.map(p => `<button type="button" class="chip" data-bco="${p.id}" aria-pressed="${B.co.has(p.id)}">${av(p.n, 'friend')}${esc(p.n)}</button>`).join('') : '<p class="empty">Add friends in your network to organize with them.</p>';
+}
+function addPlace(item) {
+  const zs = item.o ? [item.o] : zipsForPlace(item.p);
+  let n = 0;
+  for (const o of zs) if (!B.picked.includes(o) && B.picked.length < 25) { B.picked.push(o); B.removed.delete(o.z); n++; }
+  if (!n) toast(`${item.label} is already in your list`);
+  if (!$('#bName').value.trim() || $('#bName').dataset.auto === '1') { $('#bName').value = funName(B.picked, B.seed); $('#bName').dataset.auto = '1'; }
+  refill(); renderBuilder();
+  $('#bSearch').value = ''; $('#bSugg').hidden = true; $('#bSearch').focus();
+}
+let bResults = [];
+$('#bSearch').addEventListener('input', () => {
+  bResults = placeSearch($('#bSearch').value);
+  $('#bSugg').innerHTML = bResults.map((r, i) => `<button type="button" role="option" data-bpick="${i}"><span>${esc(r.label)}</span><small>${esc(r.sub)}</small></button>`).join('') || ($('#bSearch').value.trim().length > 1 ? '<p class="empty" style="padding:10px 14px">No matching places. Try a ZIP code or “City, ST”.</p>' : '');
+  $('#bSugg').hidden = !$('#bSugg').innerHTML;
+});
+$('#bSearch').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); if (bResults[0]) addPlace(bResults[0]); } });
+$('#bName').addEventListener('input', () => { $('#bName').dataset.auto = '0'; });
+$('#bGoal').addEventListener('input', () => { B.goalTouched = true; const d = $('#bGoal').value.replace(/\D/g, '').slice(0, 9); $('#bGoal').value = d ? fmt(+d) : ''; renderBuilder(); });
+$('#builder').addEventListener('click', e => {
+  if (e.target === $('#builder') || e.target.closest('#bClose')) { closeBuilder(); return; }
+  const pk = e.target.closest('[data-bpick]'); if (pk) { addPlace(bResults[+pk.dataset.bpick]); return; }
+  const rm = e.target.closest('[data-bremove]');
+  if (rm) { const z = rm.dataset.bremove; if (B.picked.some(o => o.z === z)) B.picked = B.picked.filter(o => o.z !== z); else B.removed.add(z); refill(); renderBuilder(); return; }
+  if (e.target.closest('#bShuffle')) { B.seed = Date.now(); refill(); renderBuilder(); return; }
+  if (e.target.closest('#bNameGen')) { $('#bName').value = funName(B.picked.length ? B.picked : ZIPS.slice(0, 1), Date.now()); $('#bName').dataset.auto = '0'; return; }
+  const g = e.target.closest('[data-bgoal]'); if (g) { B.goalTouched = true; $('#bGoal').value = fmt(+g.dataset.bgoal); renderBuilder(); return; }
+  const co = e.target.closest('[data-bco]'); if (co) { const id = co.dataset.bco; B.co.has(id) ? B.co.delete(id) : B.co.add(id); co.setAttribute('aria-pressed', String(B.co.has(id))); return; }
+});
+$('#bForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = $('#bName').value.trim(), goal = +$('#bGoal').value.replace(/\D/g, ''), kids = bKids(), err = m => { $('#bErr').textContent = m; };
+  if (!B.picked.length) return err('Add at least one place.');
+  if (kids < THRESHOLD) return err(`Campaigns need at least 5,000 kids. Add more places (${fmt(THRESHOLD - kids)} to go).`);
+  if (name.length < 3) return err('Give your campaign a name of at least 3 characters.');
+  if (!(goal >= 1000)) return err('Set a goal of at least $1,000.');
+  if (goal > 100000000) return err('Set a goal of $100 million or less.');
+  const cp = { id: 'u' + Date.now().toString(36), name: name.slice(0, 60), goal, picked: B.picked.map(o => o.z), zips: B.picked.concat(B.added).map(o => o.z), co: [...B.co], desc: $('#bDesc').value.trim().slice(0, 200), t: Date.now() };
+  S.campaigns.unshift(cp); persist();
+  closeBuilder(); goCamp(cp.id); toast('Campaign published. Share it to get the first gifts.');
+});
+
+/* Home stats, tries, cards */
+const totalKids = ZIPS.reduce((s, o) => s + o.kids, 0);
+const eligKids = eligibleZips.reduce((s, o) => s + o.kids, 0);
+$('#homeStats').innerHTML = [
+  [fmt(ZIPS.length), 'ZIP code areas counted'],
+  [fmt(eligibleZips.length), 'ZIPs with 5,000+ kids'],
+  [(totalKids / 1e6).toFixed(1) + 'M', 'kids 18 and under nationwide'],
+  [usdC(eligibleZips.reduce((s, o) => s + campaign(o).raised, 0)), 'raised in ZIP campaigns so far'],
+].map(([n, l]) => `<div class="stat"><span class="num">${n}</span><small>${l}</small></div>`).join('');
+
+const TRIES = ['77449', '60629', '90011', '33012', '05401'].filter(z => ZI.has(z));
+$('#tries').insertAdjacentHTML('beforeend', TRIES.map(z => `<button class="chip-btn" type="button" data-zip="${z}"><span class="num">${z}</span>${esc(placeFor(ZI.get(z)).city)}</button>`).join(''));
+
+function renderTopCards() {
+  const top = eligibleZips.map(o => ({ o, c: campaign(o) })).sort((a, b) => b.c.raised - a.c.raised).slice(0, 6);
+  const max = top.length ? top[0].c.raised : 1;
+  $('#topCards').innerHTML = top.map(({ o, c }) => `
+    <button class="ccard" type="button" data-zip="${o.z}">
+      <div class="loc"><b>${esc(label(o))}</b><span class="num">${o.z}</span></div>
+      <div class="bar"><span style="width:${(c.raised / max * 100).toFixed(1)}%"></span></div>
+      <div class="meta"><span><b class="num">${usdC(c.raised)}</b> raised for ${fmt(o.kids)} kids</span><span><b>${usd(c.perKid)}</b> per kid</span></div>
+      <div class="meta"><span>${fmt(c.donors)} donors</span><span>${usdC(c.week)} this week</span></div>
+    </button>`).join('');
+}
+renderTopCards();
+
+/* ---------- Search ---------- */
+function lookup(raw) {
+  const z = String(raw).replace(/\D/g, '');
+  if (z.length !== 5) return { err: 'Enter a 5-digit ZIP code.' };
+  if (!ZI.has(z)) return { err: `We couldn't find people living in ZIP ${z}. PO Box and business-only ZIPs have no census population. Try your home ZIP.` };
+  return { z };
+}
+function bindSearch(form, input, errEl) {
+  input.addEventListener('input', () => { input.value = input.value.replace(/\D/g, '').slice(0, 5); if (errEl) errEl.textContent = ''; });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const r = lookup(input.value);
+    if (r.err) { if (errEl) errEl.textContent = r.err; else toast(r.err); input.focus(); return; }
+    go(r.z);
+  });
+}
+bindSearch($('#homeSearch'), $('#zipInput'), $('#homeErr'));
+
+/* ---------- Routing ---------- */
+let current = null, currentCamp = null;
+function go(z) {
+  current = z; currentCampId = null; renderDash(ZI.get(z));
+  try { if (location.hash !== '#z' + z) location.hash = 'z' + z; } catch {}
+}
+function goHome() {
+  current = null; currentCamp = null; currentCampId = null; $('#dash').hidden = true; $('#home').hidden = false; tip.hidden = true;
+  try { if (location.hash) history.pushState(null, '', location.pathname + location.search); } catch {}
+  renderTopCards(); renderHomeNetwork(); renderCampFeed(); requestAnimationFrame(layoutHome); window.scrollTo({ top: 0 });
+}
+function route() {
+  const m = location.hash.match(/^#z(\d{5})$/), mc = location.hash.match(/^#c([a-z0-9]+)$/);
+  if (m && ZI.has(m[1])) { if (current !== m[1]) { current = m[1]; currentCampId = null; renderDash(ZI.get(m[1])); } }
+  else if (mc && campById(mc[1])) { if (currentCampId !== mc[1]) renderCamp(campById(mc[1])); }
+  else if (current !== null || currentCampId !== null || $('#home').hidden) goHome();
+}
+window.addEventListener('hashchange', route);
+window.addEventListener('popstate', route);
+
+document.addEventListener('click', e => {
+  const fb = e.target.closest('[data-follow]');
+  if (fb) {
+    const p = PI.get(fb.dataset.follow), on = following.has(p.id);
+    on ? following.delete(p.id) : following.add(p.id); persist(); refreshNetwork();
+    toast(on ? `Unfollowed ${p.n}` : `Following ${p.n}`); return;
+  }
+  const fr = e.target.closest('[data-friend]');
+  if (fr) {
+    const id = fr.dataset.friend, p = PI.get(id), act = fr.dataset.act;
+    if (act === 'ask') { pendingRemove = id; renderDrawer(); return; }
+    pendingRemove = null;
+    if (act === 'add') { friends.add(id); toast(`${p.n} added to your friends`); }
+    if (act === 'remove') {
+      friends.delete(id);
+      if (S.custom.some(c => c.id === id)) { S.custom = S.custom.filter(c => c.id !== id); rebuildNet(); }
+      toast(`Removed ${p.n} from your friends`);
+    }
+    if (act !== 'cancel') { persist(); refreshNetwork(); } else renderDrawer();
+    return;
+  }
+  const dt = e.target.closest('[data-dtab]'); if (dt) { drawerTab = dt.dataset.dtab; pendingRemove = null; renderDrawer(); $('#drawerBody').scrollTop = 0; return; }
+  if (e.target.closest('[data-open-network]')) { openDrawer(); return; }
+  const nf = e.target.closest('[data-netfilter]'); if (nf) { netFilter = nf.dataset.netfilter; renderDrawer(); return; }
+  const ff = e.target.closest('[data-feedfilter]');
+  if (ff) { feedFilter = ff.dataset.feedfilter; if (currentCamp) $('#feedPanel').outerHTML = feedPanel(currentCamp, campaign(currentCamp)); return; }
+  const iv = e.target.closest('[data-invite]'); if (iv) { invite(iv.dataset.invite); return; }
+  const st = e.target.closest('[data-start]'); if (st) { closeDrawer(false); openBuilder(st.dataset.start); return; }
+  const sh = e.target.closest('[data-share-camp]'); if (sh) { const cp = campById(sh.dataset.shareCamp); if (cp) shareCamp(cp); return; }
+  const cf = e.target.closest('[data-campfilter]');
+  if (cf) { campFilter = cf.dataset.campfilter; document.querySelectorAll('[data-campfilter]').forEach(b => b.setAttribute('aria-pressed', String(b === cf))); renderCampFeed(); return; }
+  const dc = e.target.closest('[data-delete-camp]');
+  if (dc) {
+    if (dc.dataset.armed !== '1') { dc.dataset.armed = '1'; dc.textContent = 'Click again to delete'; dc.classList.add('danger'); return; }
+    const id = dc.dataset.deleteCamp; S.campaigns = S.campaigns.filter(c => c.id !== id); delete S.gifts['C' + id]; persist();
+    toast('Campaign deleted'); goHome(); return;
+  }
+  const cb = e.target.closest('[data-camp]'); if (cb) { if (cb.closest('#drawer')) closeDrawer(false); goCamp(cb.dataset.camp); return; }
+  const zb = e.target.closest('[data-zip]'); if (zb) { if (zb.closest('#drawer')) closeDrawer(false); go(zb.dataset.zip); return; }
+  const sc = e.target.closest('[data-scroll]');
+  if (sc) { e.preventDefault(); if ($('#home').hidden) goHome(); setTimeout(() => document.getElementById(sc.dataset.scroll).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }), 30); }
+});
+$('#brand').addEventListener('click', goHome);
+$('#startBtn').addEventListener('click', () => { if ($('#home').hidden) goHome(); setTimeout(() => { window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); $('#zipInput').focus(); }, 30); });
+
+let toastT;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2600); }
+
+/* ---------- Dashboard ---------- */
+const ICON = {
+  check: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+  x: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  back: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>',
+  lock: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>',
+  kid: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="6.5" r="3"/><path d="M6 21v-3.5A6 6 0 0 1 18 17.5V21"/></svg>',
+  dot: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="4"/></svg>',
+  link: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
+  share: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>',
+};
+
+function areaPanel(o) {
+  const maxAge = Math.max(...o.ages, 1);
+  const labels = ['Under 5', '5–9', '10–14', '15–17', '18*'];
+  const share = o.pop ? o.kids / o.pop : 0;
+  const dens = o.sq > 0 ? o.pop / o.sq : null;
+  return `
+  <section class="panel">
+    <div class="panel-head"><h2>Area profile</h2><span class="eyebrow">ACS 2020–2024</span></div>
+    <div class="locmap"><canvas id="locMap" role="img" aria-label="Location of ZIP ${o.z} on a U.S. map"></canvas></div>
+    ${o.x === null ? '<p style="font-size:13px;color:var(--muted);margin-top:6px">This ZIP is outside the mapped states.</p>' : ''}
+    <div class="facts" style="margin-top:16px">
+      <div class="fact wide"><small>Kids 18 and under (every age, not just babies born 2025–2028)</small>
+        <div class="kidsbig ${o.ok ? '' : 'no'}"><span class="num">${fmt(o.kids)}</span><span style="color:var(--muted);font-size:14px">${(share * 100).toFixed(1)}% of residents</span></div></div>
+      <div class="fact"><small>Total population</small><span class="num">${fmt(o.pop)}</span></div>
+      <div class="fact"><small>Median household income</small><span class="num">${o.inc ? usd(o.inc) : 'n/a'}</span></div>
+      <div class="fact"><small>Land area</small><span class="num">${o.sq < 10 ? o.sq.toFixed(1) : fmt(o.sq)} sq mi</span></div>
+      <div class="fact"><small>People per sq mi</small><span class="num">${dens === null ? 'n/a' : fmt(dens)}</span></div>
+      <div class="fact wide"><small style="margin-bottom:8px">Children by age</small>
+        <div class="ages">${o.ages.map((v, i) => `<div class="age"><span>${labels[i]}</span><div class="bar"><span style="width:${(v / maxAge * 100).toFixed(1)}%"></span></div><span class="num">${fmt(v)}</span></div>`).join('')}</div>
+        <p style="font-size:12px;color:var(--muted);margin-top:8px">*The Census reports ages 18 and 19 together. Half of that group is counted as 18-year-olds.</p></div>
+    </div>
+  </section>`;
+}
+function aboutPanel() {
+  return `
+  <section class="panel about">
+    <div class="panel-head"><h2>About Trump Accounts</h2></div>
+    <p>Tax-advantaged investment accounts for U.S. children, created by the 2025 tax law.</p>
+    <ul>
+      <li>${ICON.check}<span><b>Every kid counts here.</b> Hometown Seed counts all kids 18 and under in each area, not only babies born from 2025 through 2028.</span></li>
+      <li>${ICON.check}<span>Only children born 2025–2028 get Treasury's $1,000 starter deposit. Community gifts go to every child in the area.</span></li>
+      <li>${ICON.check}<span>Family, friends and employers can add up to $5,000 a year per child.</span></li>
+      <li>${ICON.check}<span><b>Gifts here sit outside that $5,000 limit.</b> They are made through a charity as a general funding contribution to every child in the area, which the law doesn't count toward a child's yearly cap.</span></li>
+      <li>${ICON.check}<span>Money is invested in low-cost U.S. stock index funds until the child turns 18.</span></li>
+    </ul>
+  </section>`;
+}
+let feedFilter = 'all';
+function feedPanel(o, c) {
+  const all = feedFor(o, c);
+  const f = feedFilter === 'network' ? all.filter(d => d.kind === 'friend' || d.kind === 'major' || d.kind === 'you') : all;
+  return `
+  <section class="panel" id="feedPanel">
+    <div class="panel-head"><h2>Recent gifts</h2>
+      <div class="seg sm" role="group" aria-label="Show gifts from"><button type="button" data-feedfilter="all" aria-pressed="${feedFilter === 'all'}">All</button><button type="button" data-feedfilter="network" aria-pressed="${feedFilter === 'network'}">Network</button></div></div>
+    <div class="keyrow"><span><i class="kf"></i>Friends</span><span><i class="km"></i>Donors you follow</span><span><i class="ky"></i>You</span><span class="num" style="margin-left:auto">${fmt(c.donors)} donors</span></div>
+    <div class="feed">${f.length ? f.slice(0, 10).map(d => `
+      <div class="don k-${d.kind}">
+        ${av(d.n, d.kind)}
+        <div style="min-width:0"><b>${esc(d.n)}</b>${badge(d.kind)}${d.m ? `<p>${esc(d.m)}</p>` : ''}</div>
+        <span class="amt-tag">${usd(d.a)}<small>${d.mo ? 'Monthly · ' : ''}${ago(d.t)}</small></span>
+      </div>`).join('') : `<p class="empty">No one in your network has given to ${esc(where(o))} yet.</p>`}</div>
+  </section>`;
+}
+// Running-tally bar: fill grows to the next milestone (or the campaign goal); a tag rides the end of the fill.
+function tallyBar() {
+  return `<div class="tally" id="tally" data-top="1">
+    <div class="tally-tag" id="tallyTag"></div>
+    <div class="pbar" role="progressbar" aria-label="Running total" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i style="left:50%"></i><span id="pbarFill"></span><span class="netfill" id="pbarNet"></span></div>
+    <div class="ticks"><span style="left:0">$0</span><span style="left:50%" id="tickMid"></span><span style="left:100%" id="tickTop"></span></div>
+  </div>`;
+}
+function updateTally(o, c) {
+  const t = $('#tally'); if (!t) return;
+  const top = o.isCamp ? o.camp.goal : milestone(c.raised), w = Math.min(100, c.raised / top * 100);
+  t.dataset.top = top;
+  t.querySelector('.pbar').setAttribute('aria-valuenow', String(Math.round(w)));
+  $('#pbarFill').style.width = w.toFixed(2) + '%';
+  const tag = $('#tallyTag');
+  tag.innerHTML = `<b>${usdC(c.raised)}</b> for <b>${fmt(o.kids)}</b> kids`;
+  tag.style.left = w + '%'; tag.style.transform = `translateX(-${w}%)`;
+  $('#tickMid').textContent = usdC(top / 2);
+  $('#tickTop').textContent = (o.isCamp ? 'Goal ' : 'Next milestone ') + usdC(top);
+  setNetBar(c);
+}
+function campaignPanel(o, c) {
+  if (o.isCamp) return goalPanel(o, c);
+  const city = placeFor(o).city, org = pick(rng(hashStr('org' + o.z)), ORGANIZERS(city));
+  return `
+  <section class="panel hero-panel" id="campPanel">
+    <div class="panel-head" style="margin-bottom:22px"><span class="eyebrow">${o.isFund ? `Area Fund · ${o.fund.members.length} ZIPs` : 'ZIP campaign'} · Running total</span><span class="eyebrow">Every gift is split evenly</span></div>
+    <div class="raised">
+      <div><div class="big" id="raisedNum">${usd(c.raised)}</div><p class="of">raised so far for <b class="num">${fmt(o.kids)}</b> kids</p></div>
+      <div style="text-align:right"><div class="pct" id="perKidBig">${usd(c.perKid, 2)}</div><p class="of">per kid so far</p></div>
+    </div>
+    ${tallyBar()}
+    ${barKey(c)}
+    <div class="kpis">
+      <div class="kpi"><span class="num" id="donorNum">${fmt(c.donors)}</span><small>donors</small></div>
+      <div class="kpi"><span class="num">${fmt(o.kids)}</span><small>kids in ${o.isFund ? 'the fund' : 'this ZIP'}</small></div>
+      <div class="kpi"><span class="num" id="weekNum">${usdC(c.week)}</span><small>raised this week</small></div>
+      <div class="kpi"><span class="num" id="avgGift">${usd(c.donors ? c.raised / c.donors : 0)}</span><small>average gift</small></div>
+    </div>
+    ${netStrip(o, c)}
+    <div class="org">
+      <span class="avatar">${esc(initials(org))}</span>
+      <span>Organized by <b>${esc(org)}</b><br>Beneficiaries: every child 18 and under in ${o.isFund ? `the fund's ${o.fund.members.length} ZIP codes` : `ZIP ${o.z}`}</span>
+      <span class="sp"><button class="btn btn-ghost btn-sm" type="button" id="shareBtn">${ICON.share}Share</button><a class="btn btn-green btn-sm" href="#donate" id="jumpDonate">Donate</a></span>
+    </div>
+  </section>`;
+}
+function goalPanel(o, c) {
+  const cp = o.camp, team = campTeam(cp);
+  const teamTxt = team.length === 1 ? team[0].n : `${team[0].n} with ${team.slice(1).map(t => t.n.split(' ')[0]).join(', ')}`;
+  return `
+  <section class="panel hero-panel" id="campPanel">
+    <div class="panel-head" style="margin-bottom:22px"><span class="eyebrow">Community campaign · ${cp.zips.length} ZIP codes</span>${c.pct >= 1 ? `<span class="pill gold">${ICON.check}Goal reached</span>` : `<span class="eyebrow">Started ${ago(cp.t).toLowerCase()}</span>`}</div>
+    <div class="raised">
+      <div><div class="big" id="raisedNum">${usd(c.raised)}</div><p class="of">raised of a <b class="num">${usd(cp.goal)}</b> goal</p></div>
+      <div style="text-align:right"><div class="pct" id="pctNum">${Math.floor(c.pct * 100)}%</div><p class="of">of goal</p></div>
+    </div>
+    ${tallyBar()}
+    ${barKey(c)}
+    <div class="kpis">
+      <div class="kpi"><span class="num" id="donorNum">${fmt(c.donors)}</span><small>donors</small></div>
+      <div class="kpi"><span class="num">${fmt(o.kids)}</span><small>kids</small></div>
+      <div class="kpi"><span class="num">${cp.zips.length}</span><small>ZIP codes</small></div>
+      <div class="kpi"><span class="num" id="perKid">${usd(c.perKid, 2)}</span><small>per kid so far</small></div>
+    </div>
+    ${netStrip(o, c)}
+    <div class="org">
+      <span class="avstack">${team.slice(0, 4).map(t => av(t.n, t.kind)).join('')}</span>
+      <span>Started by <b>${esc(teamTxt)}</b><br>Beneficiaries: every child 18 and under in the campaign's ${cp.zips.length} ZIP codes</span>
+      <span class="sp">${cp.own ? `<button class="btn btn-ghost btn-sm" type="button" data-delete-camp="${cp.id}">Delete</button>` : ''}<button class="btn btn-ghost btn-sm" type="button" id="shareBtn">${ICON.share}Share</button><a class="btn btn-green btn-sm" href="#donate" id="jumpDonate">Donate</a></span>
+    </div>
+  </section>`;
+}
+function donatePanel(o) {
+  const amts = [25, 50, 100, 250, 500, 1000];
+  return `
+  <section class="panel" id="donate">
+    <div id="donateBody">
+    <form class="stack" id="donForm" novalidate>
+      <div class="subhead"><h3><span class="n">1</span>Your gift</h3>
+        <div class="seg" role="group" aria-label="Frequency"><button type="button" data-freq="once" aria-pressed="true">One-time</button><button type="button" data-freq="monthly" aria-pressed="false">Monthly</button></div></div>
+      <div class="amts" role="group" aria-label="Gift amount">${amts.map(a => `<button type="button" class="amt" data-amt="${a}" aria-pressed="${a === 100}">${usd(a)}</button>`).join('')}</div>
+      <label class="field"><span>Or enter an amount</span><div class="money"><input class="input" id="customAmt" inputmode="decimal" placeholder="Other amount" autocomplete="off"></div></label>
+      <div class="impactcard" id="impactCard">
+        <div class="ic-head"><span class="eyebrow">Your impact per child</span>
+          <div class="seg sm" role="group" aria-label="Average yearly growth"><button type="button" data-rate="0.05" aria-pressed="false">5% a year</button><button type="button" data-rate="0.07" aria-pressed="true">7%</button><button type="button" data-rate="0.09" aria-pressed="false">9%</button></div></div>
+        <input type="range" class="slider" id="amtSlider" min="0" max="1000" step="1" aria-label="Gift amount">
+        <div class="slider-ends"><span>$5</span><span>Slide to change your gift</span><span>$1M</span></div>
+        <p class="ic-lead" id="icLead"></p>
+        <div class="ic-rows" id="icRows"></div>
+        <p class="ic-total" id="icTotal"></p>
+        <p class="ic-note">Projections assume the money grows at the average yearly rate you pick, as in a U.S. stock index fund. Returns can be lower and aren't guaranteed. This gift sits outside each child's $5,000 yearly limit.</p>
+      </div>
+      <label class="check"><input type="checkbox" id="coverFees" checked><span>Add 3% to cover processing so 100% of my gift reaches kids in ${esc(where(o))}</span></label>
+      <div class="row">
+        <label class="field"><span>First name</span><input class="input" id="fn" autocomplete="given-name"></label>
+        <label class="field"><span>Last name</span><input class="input" id="ln" autocomplete="family-name"></label>
+      </div>
+      <label class="field"><span>Email <em>for your receipt</em></span><input class="input" id="em" type="email" autocomplete="email"></label>
+      <label class="field"><span>Message <em>optional, shown publicly</em></span><textarea class="input" id="msg" maxlength="140" placeholder="Say something to the families you're supporting"></textarea></label>
+      <label class="check"><input type="checkbox" id="anon"><span>Show my gift as anonymous</span></label>
+
+      <div class="divider"></div>
+      <div class="subhead"><h3><span class="n">2</span>Payment details</h3>
+        <div class="seg" role="group" aria-label="Payment method"><button type="button" data-pay="card" aria-pressed="true">Card</button><button type="button" data-pay="bank" aria-pressed="false">Bank account</button></div></div>
+      <div class="demo">${ICON.lock}<span>Demo checkout. Nothing is charged and payment details never leave this page. Try card 4242 4242 4242 4242 with any future date.</span></div>
+      <div id="payCard" class="stack">
+        <label class="field"><span>Name on card</span><input class="input" id="cname" autocomplete="cc-name"></label>
+        <label class="field"><span>Card number</span><div class="cardnum"><input class="input mono" id="cnum" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456"><span class="brandtag" id="cbrand" hidden></span></div></label>
+        <div class="row r3">
+          <label class="field"><span>Expiration</span><input class="input mono" id="cexp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY"></label>
+          <label class="field"><span>CVC</span><input class="input mono" id="ccvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123"></label>
+          <label class="field"><span>Billing ZIP</span><input class="input mono" id="czip" inputmode="numeric" autocomplete="postal-code" placeholder="12345"></label>
+        </div>
+      </div>
+      <div id="payBank" class="stack" hidden>
+        <label class="field"><span>Account holder</span><input class="input" id="bname" autocomplete="name"></label>
+        <div class="row">
+          <label class="field"><span>Routing number</span><input class="input mono" id="brout" inputmode="numeric" placeholder="9 digits"></label>
+          <label class="field"><span>Account number</span><input class="input mono" id="bacct" inputmode="numeric" placeholder="4–17 digits"></label>
+        </div>
+        <label class="field"><span>Account type</span><select class="input" id="btype"><option>Checking</option><option>Savings</option></select></label>
+      </div>
+      <div class="summary" id="summary"></div>
+      <p class="err" id="formErr" role="alert"></p>
+      <button class="btn btn-green submit" type="submit" id="submitBtn">Donate</button>
+    </form>
+    </div>
+  </section>`;
+}
+function notEligiblePanel(o, f) {
+  const short = THRESHOLD - o.kids;
+  const fundNote = f ? ` It belongs to the forming ${esc(fundName(f))}, which has ${fmt(f.kids)} kids so far. There aren't enough small ZIPs within ${FUND_MILES} miles of each other to reach 5,000 yet.` : '';
+  const near = eligibleZips.map(e => ({ e, d: miles(o, e) })).sort((a, b) => a.d - b.d).slice(0, 4);
+  return `
+  <section class="panel hero-panel">
+    <div class="panel-head" style="margin-bottom:22px"><span class="eyebrow">Eligibility check</span><span class="eyebrow">Needs ${fmt(THRESHOLD)} kids</span></div>
+    <div class="raised">
+      <div><div class="big">${fmt(o.kids)}</div><p class="of">children of the <b class="num">${fmt(THRESHOLD)}</b> needed</p></div>
+      <div class="pct" style="color:var(--red)">${Math.floor(o.kids / THRESHOLD * 100)}%</div>
+    </div>
+    <div class="pbar"><span id="pbarFill" data-w="${(o.kids / THRESHOLD * 100).toFixed(2)}" style="background:var(--red)"></span></div>
+    <p class="meter-note">ZIP ${o.z} has <b>${fmt(o.kids)} kids</b> 18 and under, which is <b>${fmt(short)} short</b> of the ${fmt(THRESHOLD)} needed to open a ZIP campaign.${fundNote} You can still give to a nearby ZIP that qualifies.</p>
+    <h3 style="font-size:17px;font-weight:800;margin-top:24px">Eligible ZIPs near you</h3>
+    <div class="nearby">${near.map(({ e, d }) => { const c = campaign(e); return `
+      <button class="nb" type="button" data-zip="${e.z}"><b>${esc(label(e))} <span class="num" style="color:var(--muted);font-weight:500">${e.z}</span></b>
+      <small>${d < 10 ? d.toFixed(1) : fmt(d)} mi away · ${fmt(e.kids)} kids</small>
+      <small><span class="num" style="color:var(--ink)">${usdC(c.raised)}</span> raised · ${usd(c.perKid)} per kid</small></button>`; }).join('')}</div>
+    <div class="netstrip none" style="margin-top:18px"><span>Want to back ${o.z} directly? Start a community campaign with this ZIP and we'll add nearby places that have received the least, until it reaches 5,000 kids.</span><button class="btn btn-green btn-sm" type="button" data-start="${o.z}">Start a campaign</button></div>
+  </section>`;
+}
+
+function renderDash(o) {
+  const f = o.ok ? null : fundOf(o);
+  const camp = o.ok ? o : f && f.kids >= THRESHOLD ? fundCamp(f) : null;
+  currentCamp = camp;
+  const c = camp ? campaign(camp) : null;
+  const pl = placeFor(o);
+  const sub = o.ok ? `A running-total campaign for the ${fmt(o.kids)} kids in ZIP ${o.z}. Every gift is split evenly into their Trump Accounts.`
+    : camp ? `ZIP ${o.z} has ${fmt(o.kids)} kids, under the 5,000 needed alone. It has teamed up with ${f.members.length - 1} nearby ${f.members.length === 2 ? 'ZIP' : 'ZIPs'} in the ${esc(fundName(f))} to reach ${fmt(f.kids)} kids together.`
+    : `ZIP ${o.z} doesn't have enough children to open its own campaign yet.`;
+  const pill = o.ok ? `<span class="pill ok">${ICON.check}Eligible</span>` : camp ? `<span class="pill ok">${ICON.link}Eligible via Area Fund</span>` : `<span class="pill no">${ICON.x}Not eligible</span>`;
+  const dash = $('#dash');
+  dash.innerHTML = `
+  <div class="wrap dash-head">
+    <div class="crumbs">
+      <button class="back" type="button" id="backBtn">${ICON.back}All ZIP codes</button>
+      <form class="search mini" id="dashSearch" novalidate><label for="dashZip"><input id="dashZip" inputmode="numeric" maxlength="5" placeholder="Another ZIP" aria-label="Another ZIP code"></label><button class="btn btn-green" type="submit">Go</button></form>
+    </div>
+    <div class="title-row">
+      <div style="min-width:0"><h1>${esc(pl.city)}${pl.st ? ', ' + pl.st : ''} <span class="num">${o.z}</span></h1>
+        <p style="max-width:70ch">${sub}</p></div>
+      ${pill}
+    </div>
+  </div>
+  <div class="wrap grid">
+    <div class="col">${camp ? campaignPanel(camp, c) + donatePanel(camp) : notEligiblePanel(o, f)}</div>
+    <div class="col">${f ? fundPanel(o, f) : ''}${areaPanel(o)}${camp ? feedPanel(camp, c) : ''}${aboutPanel()}</div>
+  </div>`;
+  $('#home').hidden = true; dash.hidden = false; tip.hidden = true;
+  window.scrollTo({ top: 0 });
+  drawBase($('#locMap'), { small: true, faint: true, pin: o });
+  requestAnimationFrame(() => requestAnimationFrame(() => { if (camp) updateTally(camp, c); else { const f = $('#pbarFill'); if (f) f.style.width = f.dataset.w + '%'; } }));
+  $('#backBtn').addEventListener('click', goHome);
+  bindSearch($('#dashSearch'), $('#dashZip'), null);
+  if (camp) wireDonate(camp);
+  if (f) drawFundMap($('#fundMap'), f, o);
+}
+
+/* Area Fund panel: zoomed map, kids-by-member bar, member list */
+function fundPanel(o, f) {
+  const ms = f.members, done = f.kids >= THRESHOLD;
+  let far = 1; for (const a of ms) for (const b of ms) far = Math.max(far, miles(a, b));
+  const scale = Math.max(f.kids, THRESHOLD), thr = THRESHOLD / scale * 100;
+  const row = m => `<button type="button" class="mrow ${m === o ? 'me' : ''}" data-zip="${m.z}"><span class="num">${m.z}</span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(label(m))}</span><span class="num">${fmt(m.kids)}</span><small>${m === o ? 'This ZIP' : fmt(miles(o, m)) + ' mi'}</small></button>`;
+  const top = ms.slice(0, 8), rest = ms.slice(8);
+  if (!top.includes(o)) { top.push(o); rest.splice(rest.indexOf(o), 1); }
+  return `
+  <section class="panel" id="fundPanel">
+    <div class="panel-head"><div><p class="eyebrow">${done ? 'Area Fund' : 'Area Fund · forming'}</p><h2 style="margin-top:4px">${esc(fundName(f))}</h2></div><span class="eyebrow">${ms.length} ZIPs · all within ${fmt(Math.ceil(far))} mi of each other</span></div>
+    <div class="fundmap"><canvas id="fundMap" role="img" aria-label="Map of the ${ms.length} ZIP codes in the ${esc(fundName(f))}"></canvas></div>
+    <div class="fundbar-wrap" aria-hidden="true">
+      <div class="fundbar">${ms.map(m => `<span class="${m === o ? 'me' : ''}" style="flex:${m.kids} 0 0"></span>`).join('')}${done ? '' : `<span class="gap" style="flex:${THRESHOLD - f.kids} 0 0"></span>`}</div>
+      <span class="thr ${thr > 70 ? 'flip' : ''}" style="left:${thr.toFixed(2)}%"><b>${fmt(THRESHOLD)} kids</b></span>
+    </div>
+    <p class="meter-note" style="margin-top:10px"><b>${fmt(f.kids)} kids</b> together, ${done ? `${fmt(f.kids - THRESHOLD)} over the threshold` : `<b>${fmt(THRESHOLD - f.kids)} short</b> of 5,000`}. ZIP ${o.z} adds <b>${fmt(o.kids)}</b>${o.kids ? ` (${Math.round(o.kids / f.kids * 100)}%)` : ''}.</p>
+    <div class="mlist"><div class="mhead"><span>ZIP</span><span>Place</span><span>Kids</span><span>Distance</span></div>${top.map(row).join('')}
+      ${rest.length ? `<details class="more"><summary>Show all ${ms.length} ZIPs</summary>${rest.map(row).join('')}</details>` : ''}</div>
+  </section>`;
+}
+function drawFundMap(cv, f, o, opts = {}) {
+  if (!cv) return;
+  const hi = opts.hi || new Set(o ? [o.z] : []);
+  const pts = f.members.filter(m => m.x !== null);
+  const dpr = Math.min(window.devicePixelRatio || 1, 2), w = cv.clientWidth, h = cv.clientHeight;
+  if (!w || !h) return;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+  if (!pts.length) return;
+  const [x0, x1] = d3.extent(pts, m => m.x), [y0, y1] = d3.extent(pts, m => m.y);
+  const sw = Math.max(x1 - x0, 12), sh = Math.max(y1 - y0, 12 * h / w);
+  const k = Math.min((w - 56) / sw, (h - 56) / sh), tx = w / 2 - (x0 + x1) / 2 * k, ty = h / 2 - (y0 + y1) / 2 * k;
+  ctx.setTransform(dpr * k, 0, 0, dpr * k, dpr * tx, dpr * ty);
+  const path = d3.geoPath(null, ctx);
+  ctx.beginPath(); path(nation); ctx.fillStyle = css('--land'); ctx.fill();
+  ctx.beginPath(); path(borders); ctx.strokeStyle = css('--border-state'); ctx.lineWidth = 1.5 / k; ctx.stroke();
+  const green = css('--green'), navy = css('--navy'), surf = css('--surface');
+  const hull = opts.hull !== false && pts.length >= 3 ? d3.polygonHull(pts.map(m => [m.x, m.y])) : null;
+  if (hull) {
+    ctx.beginPath(); hull.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath();
+    ctx.globalAlpha = .12; ctx.fillStyle = green; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.setLineDash([5 / k, 4 / k]); ctx.strokeStyle = green; ctx.lineWidth = 1.6 / k; ctx.stroke(); ctx.setLineDash([]);
+  }
+  const vx0 = -tx / k, vx1 = (w - tx) / k, vy0 = -ty / k, vy1 = (h - ty) / k, inFund = new Set(f.members);
+  for (const m of mapped) {
+    if (inFund.has(m) || m.x < vx0 || m.x > vx1 || m.y < vy0 || m.y > vy1) continue;
+    ctx.beginPath(); ctx.arc(m.x, m.y, (m.ok ? 3.4 : 2.2) / k, 0, 6.2832);
+    ctx.globalAlpha = m.ok ? .55 : .8; ctx.fillStyle = m.ok ? green : css('--dot'); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  for (const m of pts) {
+    const r = Math.max(3, Math.sqrt(m.kids) / 7) / k;
+    ctx.beginPath(); ctx.arc(m.x, m.y, r + 1.5 / k, 0, 6.2832); ctx.fillStyle = surf; ctx.fill();
+    ctx.beginPath(); ctx.arc(m.x, m.y, r, 0, 6.2832); ctx.fillStyle = hi.has(m.z) ? green : navy; ctx.globalAlpha = hi.has(m.z) ? 1 : .75; ctx.fill(); ctx.globalAlpha = 1;
+  }
+  if (o && o.x !== null) {
+    const sx = o.x * k + tx, sy = o.y * k + ty;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.font = `600 12px ${css('--f-mono')}`; ctx.textBaseline = 'middle';
+    const t = o.z, tw = ctx.measureText(t).width, r0 = Math.max(3, Math.sqrt(o.kids) / 7) + 6;
+    const lx = sx + r0 + tw + 12 > w ? sx - r0 - tw - 12 : sx + r0;
+    ctx.fillStyle = css('--ink'); ctx.beginPath(); ctx.roundRect ? ctx.roundRect(lx, sy - 10, tw + 12, 20, 6) : ctx.rect(lx, sy - 10, tw + 12, 20); ctx.fill();
+    ctx.fillStyle = surf; ctx.fillText(t, lx + 6, sy + 1);
+  }
+}
+
+/* ---------- Donation form ---------- */
+function luhn(n) { let s = 0, alt = false; for (let i = n.length - 1; i >= 0; i--) { let d = +n[i]; if (alt) { d *= 2; if (d > 9) d -= 9; } s += d; alt = !alt; } return s % 10 === 0; }
+function abaOk(r) { if (!/^\d{9}$/.test(r)) return false; const d = [...r].map(Number); return (3 * (d[0] + d[3] + d[6]) + 7 * (d[1] + d[4] + d[7]) + (d[2] + d[5] + d[8])) % 10 === 0; }
+function brandOf(n) { if (/^4/.test(n)) return 'VISA'; if (/^(5[1-5]|2[2-7])/.test(n)) return 'MASTERCARD'; if (/^3[47]/.test(n)) return 'AMEX'; if (/^6(011|5)/.test(n)) return 'DISCOVER'; return ''; }
+
+function wireDonate(o) {
+  const st = { amt: 100, freq: 'once', pay: 'card', rate: 0.07 };
+  const form = $('#donForm');
+  const custom = $('#customAmt');
+  const slider = $('#amtSlider');
+  function gift() { return st.amt; }
+  // Log-scale slider: $5 at the left, $1,000,000 at the right, rounded to two significant digits.
+  const SMIN = 5, SMAX = 1e6;
+  const toAmt = v => { const x = SMIN * Math.pow(SMAX / SMIN, v / 1000), p = Math.pow(10, Math.floor(Math.log10(x)) - 1); return Math.max(SMIN, Math.round(x / p) * p); };
+  const toPos = a => Math.round(1000 * Math.log(Math.min(SMAX, Math.max(SMIN, a)) / SMIN) / Math.log(SMAX / SMIN));
+  const fv = (p, yrs, monthly) => monthly ? p * (Math.pow(1 + st.rate / 12, yrs * 12) - 1) / (st.rate / 12) : p * Math.pow(1 + st.rate, yrs);
+  function renderImpact(g) {
+    const mo = st.freq === 'monthly', kids = o.kids, per = g / kids;
+    const rows = [['Now', per], ['In 10 years', fv(per, 10, mo)], ['In 15 years', fv(per, 15, mo)]];
+    const top = rows[2][1] || 1;
+    $('#icLead').innerHTML = g > 0 ? `Your <b class="num">${usd(g, g % 1 ? 2 : 0)}</b>${mo ? ' a month' : ''} is split evenly across all <b>${fmt(kids)}</b> kids 18 and under in ${esc(where(o))}. Each child gets:` : 'Pick an amount to see what each child gets.';
+    $('#icRows').innerHTML = rows.map(([lbl, v], i) => `<div class="icrow ${i === 2 ? 'hi' : ''}"><span>${lbl}${i === 0 && mo ? ' (first month)' : ''}</span><div class="icbar"><span style="width:${Math.max(1.5, v / top * 100).toFixed(1)}%"></span></div><b class="num">${perKidFmt(v)}</b></div>`).join('');
+    const c = campaign(o), base = c.perKid;
+    const tot = yrs => fv(base, yrs, false) + (mo ? fv(per, yrs, true) : fv(per, yrs, false));
+    $('#icTotal').innerHTML = `With the <b class="num">${usdC(c.raised)}</b> already raised, each child would have <b class="num">${perKidFmt(base + per)}</b> today, about <b class="num">${perKidFmt(tot(10))}</b> in 10 years and <b class="num">${perKidFmt(tot(15))}</b> in 15 years.`;
+  }
+  function update() {
+    const g = gift(), fee = $('#coverFees').checked ? Math.round(g * 3) / 100 : 0, tot = g + fee;
+    renderImpact(g);
+    $('#summary').innerHTML = `<div><span>Gift to ${esc(whereShort(o))}${st.freq === 'monthly' ? ' (monthly)' : ''}</span><span class="num">${usd(g, 2)}</span></div>${fee ? `<div><span>Processing cover</span><span class="num">${usd(fee, 2)}</span></div>` : ''}<div class="tot"><span>Total${st.freq === 'monthly' ? ' per month' : ''}</span><span class="num">${usd(tot, 2)}</span></div>`;
+    $('#submitBtn').textContent = g > 0 ? `Donate ${usd(tot, 2)}${st.freq === 'monthly' ? ' / month' : ''}` : 'Donate';
+  }
+  form.addEventListener('click', e => {
+    const a = e.target.closest('[data-amt]');
+    if (a) { st.amt = +a.dataset.amt; custom.value = ''; form.querySelectorAll('[data-amt]').forEach(b => b.setAttribute('aria-pressed', b === a)); slider.value = toPos(st.amt); update(); }
+    const rt = e.target.closest('[data-rate]');
+    if (rt) { st.rate = +rt.dataset.rate; form.querySelectorAll('[data-rate]').forEach(b => b.setAttribute('aria-pressed', b === rt)); update(); }
+    const f = e.target.closest('[data-freq]');
+    if (f) { st.freq = f.dataset.freq; form.querySelectorAll('[data-freq]').forEach(b => b.setAttribute('aria-pressed', b === f)); update(); }
+    const p = e.target.closest('[data-pay]');
+    if (p) { st.pay = p.dataset.pay; form.querySelectorAll('[data-pay]').forEach(b => b.setAttribute('aria-pressed', b === p)); $('#payCard').hidden = st.pay !== 'card'; $('#payBank').hidden = st.pay !== 'bank'; }
+  });
+  custom.addEventListener('input', () => {
+    custom.value = custom.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1').replace(/(\.\d{2}).+/, '$1');
+    const v = parseFloat(custom.value);
+    form.querySelectorAll('[data-amt]').forEach(b => b.setAttribute('aria-pressed', custom.value ? 'false' : String(+b.dataset.amt === st.amt)));
+    st.amt = custom.value ? (isFinite(v) ? v : 0) : 100;
+    if (!custom.value) form.querySelector('[data-amt="100"]').setAttribute('aria-pressed', 'true');
+    if (st.amt > 0) slider.value = toPos(st.amt);
+    update();
+  });
+  slider.value = toPos(st.amt);
+  slider.addEventListener('input', () => {
+    st.amt = toAmt(+slider.value);
+    const preset = form.querySelector(`[data-amt="${st.amt}"]`);
+    form.querySelectorAll('[data-amt]').forEach(b => b.setAttribute('aria-pressed', String(b === preset)));
+    custom.value = preset ? '' : String(st.amt);
+    update();
+  });
+  $('#coverFees').addEventListener('change', update);
+  const cnum = $('#cnum');
+  cnum.addEventListener('input', () => {
+    const d = cnum.value.replace(/\D/g, '').slice(0, 19), b = brandOf(d);
+    cnum.value = b === 'AMEX' ? d.replace(/^(\d{0,4})(\d{0,6})(\d{0,5}).*/, (m, a, b2, c2) => [a, b2, c2].filter(Boolean).join(' ')) : d.replace(/(\d{4})(?=\d)/g, '$1 ');
+    $('#cbrand').hidden = !b; $('#cbrand').textContent = b;
+  });
+  $('#cexp').addEventListener('input', e => { const d = e.target.value.replace(/\D/g, '').slice(0, 4); e.target.value = d.length > 2 ? d.slice(0, 2) + ' / ' + d.slice(2) : d; });
+  for (const id of ['ccvc', 'czip', 'brout', 'bacct']) $('#' + id).addEventListener('input', e => { const max = { ccvc: 4, czip: 5, brout: 9, bacct: 17 }[id]; e.target.value = e.target.value.replace(/\D/g, '').slice(0, max); });
+  form.addEventListener('input', e => { if (e.target.classList.contains('bad')) e.target.classList.remove('bad'); });
+  $('#jumpDonate').addEventListener('click', e => { e.preventDefault(); $('#donate').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); });
+  $('#shareBtn').addEventListener('click', () => {
+    if (o.isCamp) { shareCamp(o.camp); return; }
+    const text = o.isFund ? `Help fund Trump Accounts for the ${fmt(o.kids)} kids in the ${fundDest(o.fund)}. Search ${o.fund.anchor.z} on Hometown Seed.` : `Help fund Trump Accounts for the ${fmt(o.kids)} kids in ZIP ${o.z} (${label(o)}). Search ${o.z} on Hometown Seed.`;
+    copyText(text, 'Share message copied');
+  });
+  update();
+  if (USER) {  // prefill the gift form from the signed-in account
+    const [first, ...rest] = USER.name.split(' ');
+    $('#fn').value = first || ''; $('#ln').value = rest.join(' '); $('#em').value = USER.email;
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const errs = [], bad = id => { $('#' + id).classList.add('bad'); };
+    const g = gift();
+    if (!(g >= 5)) { errs.push('Gifts start at $5.'); if (custom.value) bad('customAmt'); }
+    if (g > 1e6) { errs.push('For gifts over $1,000,000, contact the organizer.'); bad('customAmt'); }
+    if (!$('#fn').value.trim()) bad('fn'), errs.push('Add your first name.');
+    if (!$('#ln').value.trim()) bad('ln'), errs.length < 2 && errs.push('Add your last name.');
+    const em = $('#em').value.trim();
+    if (em && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) bad('em'), errs.push('Check your email address.');
+    if (st.pay === 'card') {
+      const n = $('#cnum').value.replace(/\D/g, '');
+      if (!$('#cname').value.trim()) bad('cname'), errs.push('Add the name on the card.');
+      if (n.length < 13 || !luhn(n)) bad('cnum'), errs.push('Check the card number.');
+      const m = $('#cexp').value.match(/^(\d{2}) \/ (\d{2})$/);
+      const now = new Date(), ok = m && +m[1] >= 1 && +m[1] <= 12 && new Date(2000 + +m[2], +m[1], 1) > now;
+      if (!ok) bad('cexp'), errs.push('Use a future expiration date as MM / YY.');
+      const cv = $('#ccvc').value; if (cv.length < (brandOf(n) === 'AMEX' ? 4 : 3)) bad('ccvc'), errs.push('Check the CVC.');
+      if ($('#czip').value.length !== 5) bad('czip'), errs.push('Add a 5-digit billing ZIP.');
+    } else {
+      if (!$('#bname').value.trim()) bad('bname'), errs.push('Add the account holder name.');
+      if (!abaOk($('#brout').value)) bad('brout'), errs.push('Check the 9-digit routing number.');
+      if ($('#bacct').value.length < 4) bad('bacct'), errs.push('Check the account number.');
+    }
+    if (errs.length) { $('#formErr').textContent = errs.slice(0, 2).join(' '); form.querySelector('.bad')?.focus(); return; }
+    $('#formErr').textContent = '';
+    const btn = $('#submitBtn'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Processing';
+    setTimeout(() => {
+      const anon = $('#anon').checked, fn = $('#fn').value.trim(), ln = $('#ln').value.trim();
+      const entry = { n: anon ? 'Anonymous' : `${fn} ${ln[0].toUpperCase()}.`, a: Math.round(g * 100) / 100, m: $('#msg').value.trim().slice(0, 140), t: Date.now(), mo: st.freq === 'monthly' };
+      const list = loadMine(o.z); list.push(entry); saveMine(o.z, list);
+      celebrate(o, entry, fn);
+    }, 1100);
+  });
+}
+
+function countUp(el, from, to, fmtFn) {
+  if (reduce) { el.textContent = fmtFn(to); return; }
+  const t0 = performance.now(), dur = 1200;
+  const step = now => { const e = Math.min(1, (now - t0) / dur), k = 1 - Math.pow(1 - e, 3); el.textContent = fmtFn(from + (to - from) * k); if (e < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function celebrate(o, entry, fn) {
+  const before = campaign(o); before.raised -= entry.a; before.donors -= 1;
+  const c = campaign(o), set = (id, v) => { const el = $('#' + id); if (el) el.textContent = v; };
+  countUp($('#raisedNum'), before.raised, c.raised, v => usd(Math.round(v)));
+  set('pctNum', Math.floor(c.pct * 100) + '%');
+  set('perKidBig', usd(c.perKid, 2)); set('perKid', usd(c.perKid, 2));
+  set('donorNum', fmt(c.donors)); set('weekNum', usdC(c.week)); set('avgGift', usd(c.donors ? c.raised / c.donors : 0));
+  updateDashNetwork(o);
+  $('#donateBody').innerHTML = `
+    <div class="thanks">
+      <div class="ring">${ICON.check.replace('width="18" height="18"', 'width="30" height="30"')}</div>
+      <h3>Thank you${entry.n === 'Anonymous' ? '' : ', ' + esc(fn)}!</h3>
+      <p>Your ${entry.mo ? 'monthly ' : ''}gift of <b class="num" style="color:var(--ink)">${usd(entry.a, entry.a % 1 ? 2 : 0)}</b> is in the running total for ${esc(where(o))}, now <b class="num" style="color:var(--ink)">${usd(c.raised)}</b> for ${fmt(o.kids)} kids. Each child gets <b class="num" style="color:var(--ink)">${perKidFmt(entry.a / o.kids)}</b>${entry.mo ? ' a month' : ''} from you, outside their $5,000 yearly limit. ${o.isCamp ? (c.pct >= 1 ? 'This campaign has reached its goal.' : `${usd(Math.max(0, c.goal - c.raised))} to go to reach the ${usd(c.goal)} goal.`) : ''}</p>
+      <p style="font-size:13px">This was a demo. No payment was made.</p>
+      <button class="btn btn-ghost" type="button" id="againBtn">Give again</button>
+    </div>`;
+  $('#againBtn').addEventListener('click', () => { $('#donate').outerHTML = donatePanel(o); wireDonate(o); $('#donate').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); });
+  $('#campPanel').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  toast(`${usd(entry.a)} added to ${whereShort(o)}`);
+}
+
+/* ---------- Boot ---------- */
+function redrawAll() {
+  if (!$('#home').hidden) layoutHome();
+  const lm = $('#locMap'); if (lm && !$('#dash').hidden && current) drawBase(lm, { small: true, faint: true, pin: ZI.get(current) });
+  const fm = $('#fundMap');
+  if (fm && current) { const o = ZI.get(current), f = fundOf(o); if (f) drawFundMap(fm, f, o); }
+  else if (fm && currentCamp && currentCamp.isCamp) drawFundMap(fm, { members: currentCamp.members }, null, { hull: false, hi: new Set(currentCamp.camp.picked) });
+}
+let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(redrawAll, 120); });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redrawAll);
+new MutationObserver(redrawAll).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+renderNetStack();
+renderHomeNetwork(); renderCampFeed(); updateBadge();
+layoutHome();
+ping(); setInterval(ping, 2600);
+route();
+if (document.fonts) document.fonts.ready.then(redrawAll);
+setTimeout(buildFunds, 400);const saved = lsGet('hs-session');
+if (saved) signIn(saved); else setTimeout(() => $('#loginEmail').focus(), 50);
+})();
+</script>
+
+</body>
+</html>
